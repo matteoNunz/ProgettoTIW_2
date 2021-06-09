@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+	<head>
+		<meta charset="UTF-8">
+		<title> Home </title>
+		<link rel="stylesheet" type="text/css" media="all"
+			href="../CSS/mystyle.css" th:href="@{/CSS/mystyle.css}" />
+	</head>
+
+	<body>
+		<h1>Home page</h1>
+		<h2>Nice to see you again <span th:text="${user.userName}"></span></h2>
+		<div class="logout">
+			<a th:href="@{Logout}">Logout</a>
+		</div>
+		<br>
+		
+		<fieldset class="createSongField">
+			<form th:action="@{/CreateSong}" method="POST" enctype="multipart/form-data">
+				Add a new song in your DataBase<br>
+				<p>Title: 					<input type="text" id="title" name="title" required></p>
+				<p>Genre:					<select id="genre" name="genre" required>
+												<option value="Dance"> Dance </option>
+												<option value="Pop">   Pop   </option>
+												<option value="Rap">   Rap   </option>
+												<option value="Rock">  Rock  </option>
+											</select></p>
+				<p>Album title: 			<input type="text" id="albumTitle" name="albumTitle" required></p>
+				<p>Singer: 					<input type="text" id="singer" name="singer" required></p>
+				<p>Album publication year: 	<input type="number" id="date" name="date" required></p>
+				<p>Album image: 			<input type="file" name="albumImg" required></p>
+				<p>MP3 file: 				<input type="file" name="songFile" required></p>
+				<p><input type="submit" value="submit"></p>
+				<p th:class = "error" th:text="${errorMsg1}">
+			</form>
+		</fieldset>
+		<br><br>
+		
+		<div th:class="playlistTable" th:if="${#lists.isEmpty(playlists)}">
+			No playList yet
+		</div>
+		<div th:class="playlistTable" th:if="${not #lists.isEmpty(playlists)}">
+			<table>
+				<thead>
+					<tr>
+						<th>PlayList name</th>
+						<th>Creation date</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="p : ${playlists}">
+						<td><a th:href="@{GoToPlayListPage(playlistId=${p.id} , section=0)}">
+							<span th:text="${p.title}"></span></a>
+						</td>
+						<td><span th:text="${#dates.format(p.creationDate , 'dd.MM.yyyy')}"></span></td>
+					</tr>
+				</tbody>
+			</table>
+			<p th:class = "error" th:text="${errorMsg2}"></p>
+		</div>
+		
+		<br><br>
+		<fieldset th:class="createPlaylistField">
+			<form th:action="@{/CreatePlaylist}" method="POST">
+				Create a new playList<br>
+				<p>Title: <input type="text" id="title" name="title" required></p>
+				<p><input type="submit" value="submit"></p>
+				<p th:class = "error" th:text="${errorMsg}"></p>
+			</form>
+		</fieldset>
+		
+	</body>
+
+</html>
+
+
+

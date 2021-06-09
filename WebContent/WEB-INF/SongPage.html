@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org">
+
+	<head>
+		<meta charset="UTF-8">
+		<title> Song page </title>
+		<link rel="stylesheet" type="text/css" media="all"
+			href="../CSS/mystyle.css" th:href="@{/CSS/mystyle.css}" />
+	</head>
+	
+	<body>
+		<!-- <h3> Hope you will have a good experience with us <span th:text="${user.userName}">Mario</span></h3> -->
+		<h2>PlayList: <span th:text="${playlist.title}">PlayList 1</span></h2>
+		
+		<h3>Song details:</h3>
+		
+		<table>
+			<thead>
+				<tr>
+					<th>Title</th>
+					<th>Singer</th>
+					<th>Album Title</th>
+					<th>Publication Year</th>
+					<th>Genre</th>
+					<th>Play</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td><span th:text="${song.songtitle}"></span></td>
+					<td><span th:text="${song.singer}"></span></td>
+					<td><span th:text="${song.albumtitle}"></span></td>
+					<td><span th:text="${song.publicationYear}"></span></td>
+					<td><span th:text="${song.kindOf}"></span></td>
+					<!-- <td><span th:text="${song.songFile}"></span></td> -->
+					<td>
+						<audio controls>
+							<source th:src="@{GetSong/{song}(song=${song.songFile})}" type="audio/mpeg" >
+						</audio>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		
+		<br><br>
+		
+		<div >
+			<a th:href="@{GoToPlayListPage(playlistId=${playlist.id} , section=${block})}">Back</a>
+		</div>
+		
+		<br><br>
+		<div>
+			<a th:href="@{Logout}">Logout</a>
+		</div>
+		
+	</body>
+
+</html>

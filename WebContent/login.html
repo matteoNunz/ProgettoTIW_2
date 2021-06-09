@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+	<head>
+		<meta charset = "UTF-8">
+		<title> YouMusic </title>
+		<link rel="stylesheet" type="text/css" media="all" href="CSS/mystyle.css" th:href="@{/CSS/mystyle.css}"/> <!-- th:href="@{/CSS/mystyle.css}" -->
+	</head>
+	
+	<body>
+		<h1> Welcome in YouMusic </h1>
+		<h2> Log in </h2>
+		<fieldset>
+			<form action="CheckLogin" method="POST">
+				<label for="user">UserName:</label>
+				<input type="text" id="user" name="user" required><br><br>
+				
+				<label for="password">Password:</label>
+				<input type="text" id="password" name="password" required><br><br>
+				
+				<input type="submit" value="submit">	
+				
+				<p th:class="error" th:text="${errorMsg}"></p>	
+			</form>
+		</fieldset>
+		
+		<br>
+		<div>
+			<a href="registration.html"> Sign in</a>
+		</div>
+	
+	
+	</body>
+
+</html>

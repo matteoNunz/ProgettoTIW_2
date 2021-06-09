@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd" version="3.1">
+  <display-name>TIW-PlayList-HTML-Pure</display-name>
+  <!--Params for the connection to the DB-->
+  <context-param>
+    <param-name>dbUrl</param-name>
+    <param-value>jdbc:mysql://localhost:3306/dbmusic?serverTimezone=UTC</param-value>
+  </context-param>
+  <context-param>
+    <param-name>dbUser</param-name>
+    <param-value>Matteo</param-value>
+  </context-param>
+  <context-param>
+    <param-name>dbPassword</param-name>
+    <param-value>#TIWProgetto2021</param-value>
+  </context-param>
+  <context-param>
+    <param-name>dbDriver</param-name>
+    <param-value>com.mysql.cj.jdbc.Driver</param-value>
+  </context-param>
+
+  <!--Where the server will upload the album images and the mp3 song files-->
+  <context-param>
+	<param-name>albumImgPath</param-name>
+	<param-value>C:\\Users\\Matteo Nunziante\\Documents\\TIWFile\\AlbumImg\\</param-value>
+  </context-param>
+  <context-param>
+	<param-name>songFilePath</param-name>
+	<param-value>C:\\Users\\Matteo Nunziante\\Documents\\TIWFile\\SongFile\\</param-value>
+  </context-param>
+
+
+  <!--Welcome files-->
+  <welcome-file-list>
+    <welcome-file>login.html</welcome-file>
+	<welcome-file>registration.html</welcome-file>
+</welcome-file-list>
+</web-app>

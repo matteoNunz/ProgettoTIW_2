@@ -1,0 +1,74 @@
+.error {
+	color:red;
+}
+
+/*.songsTable {
+	margin-left: auto;
+  	margin-right: auto;
+}*/
+
+.before {
+	position: relative;
+	left: -170px;
+}
+
+.next {
+	position: relative;
+	left: 350px;
+}
+
+fieldset{
+	margin-right: 60px;
+	width: 250px;
+	margin:auto;
+}
+
+img{
+	height: 100px;
+	width: 100px;
+}
+
+table , th , td {
+  	border: 1px solid black;
+  	margin: auto;
+}
+
+.simpleTable {
+	border: 0px;
+}
+
+td {
+  text-align: center;
+  vertical-align: middle;
+}
+
+body {
+	text-align: center;
+}
+
+.playlistTable {
+	position: relative;
+	margin: 0% 50% 0% 20% ;
+}
+
+.createPlaylistField {
+	position: relative;
+	margin: 0% 45% 0% 26% ;
+}
+
+.createSongField {
+	position: fixed;
+	margin: 0% -50% 0% 50% ;
+}
+
+.logout {
+	/*
+	position: fixed;
+	margin-bottom: 25%;
+	margin-top: -30%;
+	margin-left: 90%; */
+	text-align: right;
+	margin-right: 10%;
+}
+
+
