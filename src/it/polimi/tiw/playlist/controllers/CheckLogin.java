@@ -2,7 +2,6 @@ package it.polimi.tiw.playlist.controllers;
 
 import java.io.IOException;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 
 import javax.servlet.ServletContext;
@@ -13,10 +12,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.thymeleaf.TemplateEngine;
-import org.thymeleaf.context.WebContext;
-import org.thymeleaf.templatemode.TemplateMode;
-import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
+import org.apache.commons.lang.StringEscapeUtils;
 
 import it.polimi.tiw.playlist.beans.User;
 import it.polimi.tiw.playlist.dao.UserDAO;
@@ -26,7 +22,6 @@ import it.polimi.tiw.playlist.utils.ConnectionHandler;
 public class CheckLogin extends HttpServlet{
 	private static final long serialVersionUID = 1L;
 	private Connection connection;
-	private TemplateEngine templateEngine;
 
 	public CheckLogin() {
 		super();
@@ -35,13 +30,6 @@ public class CheckLogin extends HttpServlet{
 	public void init() {
 		ServletContext context = getServletContext();
 		
-		//Initializing the template engine
-		ServletContextTemplateResolver templateResolver = new ServletContextTemplateResolver(context);
-		templateResolver.setTemplateMode(TemplateMode.HTML);
-		this.templateEngine = new TemplateEngine();
-		this.templateEngine.setTemplateResolver(templateResolver);
-		templateResolver.setSuffix(".html");
-		
 		try {
 			connection = ConnectionHandler.getConnection(context);
 		} catch (UnavailableException e) {
@@ -49,51 +37,38 @@ public class CheckLogin extends HttpServlet{
 		}
 	}
 	
-	
 	public void doPost(HttpServletRequest request , HttpServletResponse response)throws ServletException,IOException{
-		//String userName = StringEscapeUtils.escapeJava(request.getParameter("user"));
-		//String password = StringEscapeUtils.escapeJava(request.getParameter("password"));
-		String userName = request.getParameter("user");
-		String password = request.getParameter("password");
-		String error = "";
+		//Take the form fields
+		String userName = StringEscapeUtils.escapeJava(request.getParameter("user"));
+		String password = StringEscapeUtils.escapeJava(request.getParameter("password"));
 		
-		//check if the parameters are not empty or null
-		if(userName == null || password == null || userName.isEmpty() || password.isEmpty())
-			error += "Missing parameters;";
-		
-		if(!error.equals("")) {
-			String path = "/login.html";
-			ServletContext servletContext = getServletContext();
-			final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
-			ctx.setVariable("errorMsg", error);
-			templateEngine.process(path, ctx, response.getWriter());
+		//check if the parameters are not empty or null -> if not, send the error and set the status of the response
+		if(userName == null || password == null || userName.isEmpty() || password.isEmpty()) {
+			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);//Code 400
+			response.getWriter().println("Missing parameters;");
 			return;
 		}
 		
 		UserDAO userDao = new UserDAO(connection);
-		User user;
+		User user = null;
 		
 		try {
-			user = (User) userDao.checkAuthentication(userName, password);
+			user = userDao.checkAuthentication(userName, password);
 			if(user != null) {
-				//go to home page
+				//Set the session and send the userName back
 				request.getSession().setAttribute("user", user);
-				String path = getServletContext().getContextPath() + "/GoToHomePage";
-				response.sendRedirect(path);
+				response.setStatus(HttpServletResponse.SC_OK);//Code 200
+				response.setContentType("application/json");
+				response.setCharacterEncoding("UTF-8");
+				response.getWriter().println(userName);
 			}else {
-				error += "Username e/o password are incorrect;";
-				String path = "login.html";
-				ServletContext servletContext = getServletContext();
-				final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
-				ctx.setVariable("errorMsg", error);
-				templateEngine.process(path, ctx, response.getWriter());
-				return;
+				response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);//Code 401
+				response.getWriter().println("Username e/o password are incorrect;");
 			}
-			
 		}catch(SQLException e) {
-			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, error);
+			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);//Code 500
+			response.getWriter().println("Internal server error, retry later");
 		}
-		
 	}
 	
 	public void destroy() {

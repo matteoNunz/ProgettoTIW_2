@@ -5,20 +5,22 @@
 		<meta charset = "UTF-8">
 		<title> YouMusic </title>
 		<link rel="stylesheet" type="text/css" media="all" href="CSS/mystyle.css" th:href="@{/CSS/mystyle.css}"/> <!-- th:href="@{/CSS/mystyle.css}" -->
+		<script src="utils.js" charset="utf-8" defer></script>
+		<script src="login.js" charset="utf-8" defer></script>
 	</head>
 	
 	<body>
 		<h1> Welcome in YouMusic </h1>
 		<h2> Log in </h2>
 		<fieldset>
-			<form action="CheckLogin" method="POST">
+			<form action="#">
 				<label for="user">UserName:</label>
 				<input type="text" id="user" name="user" required><br><br>
 				
 				<label for="password">Password:</label>
 				<input type="text" id="password" name="password" required><br><br>
 				
-				<input type="submit" value="submit">	
+				<input id="loginButton" type="button" value="login">	
 				
 				<p th:class="error" th:text="${errorMsg}"></p>	
 			</form>
