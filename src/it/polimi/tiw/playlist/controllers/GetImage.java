@@ -10,6 +10,7 @@ import java.sql.SQLException;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
+import javax.servlet.UnavailableException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -18,6 +19,7 @@ import javax.servlet.http.HttpSession;
 
 import it.polimi.tiw.playlist.beans.User;
 import it.polimi.tiw.playlist.dao.SongDAO;
+import it.polimi.tiw.playlist.utils.ConnectionHandler;
 
 @WebServlet("/GetImage/*")
 public class GetImage extends HttpServlet{
@@ -30,18 +32,8 @@ public class GetImage extends HttpServlet{
 		folderPath = getServletContext().getInitParameter("albumImgPath");
 		
 		try {
-			//Initializing the connection
-			ServletContext context = getServletContext();
-			String driver = context.getInitParameter("dbDriver");
-			String url = context.getInitParameter("dbUrl");
-			String user = context.getInitParameter("dbUser");
-			String password = context.getInitParameter("dbPassword");
-			
-			Class.forName(driver);
-			connection = DriverManager.getConnection(url , user , password);
-		}catch(ClassNotFoundException e) {
-			e.printStackTrace();
-		}catch(SQLException e) {
+			connection = ConnectionHandler.getConnection(getServletContext());
+		} catch (UnavailableException e) {
 			e.printStackTrace();
 		}
 	}
@@ -52,15 +44,7 @@ public class GetImage extends HttpServlet{
 		String pathInfo = request.getPathInfo();
 		
 		HttpSession s = request.getSession();
-		
 		User user = (User) s.getAttribute("user");
-		
-		if (s.isNew() || user == null) {
-			//Redirect to the login page
-			String path = getServletContext().getContextPath() +  "/login.html";
-			response.sendRedirect(path);
-			return;
-		}
 		
 		//Check if the path info is valid
 		if (pathInfo == null || pathInfo.equals("/")) {
@@ -106,9 +90,7 @@ public class GetImage extends HttpServlet{
 	
 	public void destroy() {
 		try {
-			if (connection != null) {
-				connection.close();
-			}
+			ConnectionHandler.closeConnection(connection);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

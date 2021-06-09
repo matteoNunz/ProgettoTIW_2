@@ -7,6 +7,7 @@ import java.sql.SQLException;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
+import javax.servlet.UnavailableException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -19,6 +20,7 @@ import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 
 import it.polimi.tiw.playlist.beans.User;
 import it.polimi.tiw.playlist.dao.UserDAO;
+import it.polimi.tiw.playlist.utils.ConnectionHandler;
 
 @WebServlet("/CheckLogin")
 public class CheckLogin extends HttpServlet{
@@ -40,20 +42,11 @@ public class CheckLogin extends HttpServlet{
 		this.templateEngine.setTemplateResolver(templateResolver);
 		templateResolver.setSuffix(".html");
 		
-		try {	
-			//Initializing the connection
-			String driver = context.getInitParameter("dbDriver");
-			String url = context.getInitParameter("dbUrl");
-			String user = context.getInitParameter("dbUser");
-			String password = context.getInitParameter("dbPassword");
-			
-			Class.forName(driver);
-			connection = DriverManager.getConnection(url , user , password);
-		}catch(ClassNotFoundException e) {
+		try {
+			connection = ConnectionHandler.getConnection(context);
+		} catch (UnavailableException e) {
 			e.printStackTrace();
-		}catch(SQLException e) {
-			e.printStackTrace();
-		}	
+		}
 	}
 	
 	
@@ -105,9 +98,7 @@ public class CheckLogin extends HttpServlet{
 	
 	public void destroy() {
 		try {
-			if (connection != null) {
-				connection.close();
-			}
+			ConnectionHandler.closeConnection(connection);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

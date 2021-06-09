@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd" version="3.1">
-  <display-name>TIW-PlayList-HTML-Pure</display-name>
+  <display-name>ProgettoTIW_2</display-name>
   <!--Params for the connection to the DB-->
   <context-param>
     <param-name>dbUrl</param-name>
@@ -29,6 +29,23 @@
 	<param-value>C:\\Users\\Matteo Nunziante\\Documents\\TIWFile\\SongFile\\</param-value>
   </context-param>
 
+  <filter> 
+      <filter-name>LoginChecker</filter-name>
+      <filter-class>it.polimi.tiw.playlist.filters.LoginChecker</filter-class> 
+ </filter> 
+
+ <filter-mapping> 
+    <filter-name>LoginChecker</filter-name> 
+    <url-pattern>/AddSong</url-pattern> 
+    <url-pattern>/CreatePlaylist</url-pattern> 
+    <url-pattern>/CreateSong</url-pattern> 
+    <url-pattern>/GetImage</url-pattern> 
+    <url-pattern>/GetSong</url-pattern> 
+	<url-pattern>/GoToHomePage</url-pattern> 
+	<url-pattern>/GoToPlaylistPage</url-pattern>
+	<url-pattern>/GoToSongPage</url-pattern>  
+    <url-pattern>/Logout</url-pattern>  
+ </filter-mapping> 
 
   <!--Welcome files-->
   <welcome-file-list>

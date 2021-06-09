@@ -7,6 +7,7 @@ import java.sql.SQLException;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
+import javax.servlet.UnavailableException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -18,6 +19,7 @@ import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 
 import it.polimi.tiw.playlist.dao.UserDAO;
+import it.polimi.tiw.playlist.utils.ConnectionHandler;
 
 @WebServlet("/Registration")
 public class Registration extends HttpServlet{
@@ -38,23 +40,15 @@ public class Registration extends HttpServlet{
 		this.templateEngine.setTemplateResolver(templateResolver);
 		templateResolver.setSuffix(".html");
 		
-		try {			
-			String driver = context.getInitParameter("dbDriver");
-			String url = context.getInitParameter("dbUrl");
-			String user = context.getInitParameter("dbUser");
-			String password = context.getInitParameter("dbPassword");
-			//System.out.println("Driver: " + driver + "\nUrl: " + url + "\nUser: " + user + "\nPassword: " + password);
-			Class.forName(driver);
-			connection = DriverManager.getConnection(url , user , password);
-		} catch (ClassNotFoundException e) {
+		try {
+			connection = ConnectionHandler.getConnection(context);
+		} catch (UnavailableException e) {
 			e.printStackTrace();
-		} catch (SQLException e) {
-			e.printStackTrace();
-	    }
+		}
 	}
 	
-	protected void doGet(HttpServletRequest request , HttpServletResponse response) {
-
+	protected void doGet(HttpServletRequest request , HttpServletResponse response) throws ServletException,IOException{
+		doPost(request , response);
 	}
 	
 	protected void doPost(HttpServletRequest request , HttpServletResponse response) throws ServletException,IOException{
@@ -127,9 +121,7 @@ public class Registration extends HttpServlet{
 	
 	public void destroy() {
 		try {
-			if (connection != null) {
-				connection.close();
-			}
+			ConnectionHandler.closeConnection(connection);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

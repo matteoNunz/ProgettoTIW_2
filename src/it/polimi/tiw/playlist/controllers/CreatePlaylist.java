@@ -9,6 +9,7 @@ import java.sql.SQLException;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
+import javax.servlet.UnavailableException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -21,6 +22,7 @@ import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 
 import it.polimi.tiw.playlist.beans.User;
 import it.polimi.tiw.playlist.dao.PlaylistDAO;
+import it.polimi.tiw.playlist.utils.ConnectionHandler;
 
 
 @WebServlet("/CreatePlaylist")
@@ -31,27 +33,18 @@ public class CreatePlaylist extends HttpServlet{
 	private TemplateEngine templateEngine;
 	
 	public void init() {
+		ServletContext context = getServletContext();
+		
+		//Initializing the template engine
+		ServletContextTemplateResolver templateResolver = new ServletContextTemplateResolver(context);
+		templateResolver.setTemplateMode(TemplateMode.HTML);
+		this.templateEngine = new TemplateEngine();
+		this.templateEngine.setTemplateResolver(templateResolver);
+		templateResolver.setSuffix(".html");
+		
 		try {
-			ServletContext context = getServletContext();
-			
-			//Initializing the template engine
-			ServletContextTemplateResolver templateResolver = new ServletContextTemplateResolver(context);
-			templateResolver.setTemplateMode(TemplateMode.HTML);
-			this.templateEngine = new TemplateEngine();
-			this.templateEngine.setTemplateResolver(templateResolver);
-			templateResolver.setSuffix(".html");
-			
-			//Initializing the connection
-			String driver = context.getInitParameter("dbDriver");
-			String url = context.getInitParameter("dbUrl");
-			String user = context.getInitParameter("dbUser");
-			String password = context.getInitParameter("dbPassword");
-			
-			Class.forName(driver);
-			connection = DriverManager.getConnection(url , user , password);
-		}catch(ClassNotFoundException e) {
-			e.printStackTrace();
-		}catch(SQLException e) {
+			connection = ConnectionHandler.getConnection(context);
+		} catch (UnavailableException e) {
 			e.printStackTrace();
 		}
 	}
@@ -63,10 +56,6 @@ public class CreatePlaylist extends HttpServlet{
 
 		HttpSession s = request.getSession();
 		User user = (User) s.getAttribute("user");
-		if (s.isNew() || user == null) {
-			response.sendRedirect("/TIW-PlayList-HTML-Pure/login.html");
-			return;
-		}
 		
 		if(title == null || title.isEmpty())
 			error += "Title is empty";
@@ -106,9 +95,7 @@ public class CreatePlaylist extends HttpServlet{
 	
 	public void destroy() {
 		try {
-			if (connection != null) {
-				connection.close();
-			}
+			ConnectionHandler.closeConnection(connection);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

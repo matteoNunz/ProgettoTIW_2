@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
+import javax.servlet.UnavailableException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -25,6 +26,7 @@ import it.polimi.tiw.playlist.beans.SongDetails;
 import it.polimi.tiw.playlist.beans.User;
 import it.polimi.tiw.playlist.dao.PlaylistDAO;
 import it.polimi.tiw.playlist.dao.SongDAO;
+import it.polimi.tiw.playlist.utils.ConnectionHandler;
 
 @WebServlet("/GoToPlayListPage")
 public class GoToPlaylistPage extends HttpServlet{
@@ -44,18 +46,8 @@ public class GoToPlaylistPage extends HttpServlet{
 		templateResolver.setSuffix(".html");
 		
 		try {
-			
-			//Initializing the connection
-			String driver = context.getInitParameter("dbDriver");
-			String url = context.getInitParameter("dbUrl");
-			String user = context.getInitParameter("dbUser");
-			String password = context.getInitParameter("dbPassword");
-			
-			Class.forName(driver);
-			connection = DriverManager.getConnection(url , user , password);
-		}catch(ClassNotFoundException e) {
-			e.printStackTrace();
-		}catch(SQLException e) {
+			connection = ConnectionHandler.getConnection(context);
+		} catch (UnavailableException e) {
 			e.printStackTrace();
 		}
 	}
@@ -69,17 +61,10 @@ public class GoToPlaylistPage extends HttpServlet{
 		int id = -1;
 		int block = 0;
 		
-		//TODO use a filter
 		HttpSession s = request.getSession();
 		
 		//Take the user
 	    User user = (User) s.getAttribute("user");
-		
-		//Check if the session is valid
-		if (s.isNew() || user == null) {
-			response.sendRedirect("/TIW-PlayList-HTML-Pure/login.html");
-			return;
-		}
 	    
 		//Check if playlistId is valid
 		if(playlistId == null || playlistId.isEmpty())
@@ -191,9 +176,7 @@ public class GoToPlaylistPage extends HttpServlet{
 
 	public void destroy() {
 		try {
-			if (connection != null) {
-				connection.close();
-			}
+			ConnectionHandler.closeConnection(connection);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

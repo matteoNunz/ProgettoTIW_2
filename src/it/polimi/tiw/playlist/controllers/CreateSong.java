@@ -15,6 +15,7 @@ import java.util.Calendar;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
+import javax.servlet.UnavailableException;
 import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -25,6 +26,7 @@ import javax.servlet.http.Part;
 
 import it.polimi.tiw.playlist.beans.User;
 import it.polimi.tiw.playlist.dao.SongDAO;
+import it.polimi.tiw.playlist.utils.ConnectionHandler;
 
 @WebServlet("/CreateSong")
 @MultipartConfig 
@@ -45,17 +47,8 @@ public class CreateSong extends HttpServlet{
 		isReplaced = false;
 		
 		try {
-			//Initializing the connection
-			String driver = context.getInitParameter("dbDriver");
-			String url = context.getInitParameter("dbUrl");
-			String user = context.getInitParameter("dbUser");
-			String password = context.getInitParameter("dbPassword");
-			
-			Class.forName(driver);
-			connection = DriverManager.getConnection(url , user , password);
-		}catch(ClassNotFoundException e) {
-			e.printStackTrace();
-		}catch(SQLException e) {
+			connection = ConnectionHandler.getConnection(context);
+		} catch (UnavailableException e) {
 			e.printStackTrace();
 		}
 	}
@@ -74,12 +67,6 @@ public class CreateSong extends HttpServlet{
 		int publicationYear = 0;
 		
 		HttpSession s = request.getSession();
-		//Check if the session is still valid
-		if (s.isNew() || s.getAttribute("user") == null) {
-			response.sendRedirect("/TIW-PlayList-HTML-Pure/login.html");
-			return;
-		}
-		
 		User user = (User) s.getAttribute("user");
 
 		String error = "";
@@ -276,9 +263,7 @@ public class CreateSong extends HttpServlet{
 	
 	public void destroy() {
 		try {
-			if (connection != null) {
-				connection.close();
-			}
+			ConnectionHandler.closeConnection(connection);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

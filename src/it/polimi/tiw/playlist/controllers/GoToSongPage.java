@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
+import javax.servlet.UnavailableException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -24,6 +25,7 @@ import it.polimi.tiw.playlist.beans.SongDetails;
 import it.polimi.tiw.playlist.beans.User;
 import it.polimi.tiw.playlist.dao.PlaylistDAO;
 import it.polimi.tiw.playlist.dao.SongDAO;
+import it.polimi.tiw.playlist.utils.ConnectionHandler;
 
 @WebServlet("/GoToSongPage")
 public class GoToSongPage extends HttpServlet{
@@ -43,18 +45,8 @@ public class GoToSongPage extends HttpServlet{
 		templateResolver.setSuffix(".html");
 		
 		try {
-			
-			//Initializing the connection
-			String driver = context.getInitParameter("dbDriver");
-			String url = context.getInitParameter("dbUrl");
-			String user = context.getInitParameter("dbUser");
-			String password = context.getInitParameter("dbPassword");
-			
-			Class.forName(driver);
-			connection = DriverManager.getConnection(url , user , password);
-		}catch(ClassNotFoundException e) {
-			e.printStackTrace();
-		}catch(SQLException e) {
+			connection = ConnectionHandler.getConnection(context);
+		} catch (UnavailableException e) {
 			e.printStackTrace();
 		}
 	}
@@ -69,15 +61,9 @@ public class GoToSongPage extends HttpServlet{
 		int pId = -1;
 		int block = -1;
 		
-		//I should do some controls about the user session
 		HttpSession s = request.getSession();
 		//Take the user
 	    User user = (User) s.getAttribute("user");
-		
-		if (s.isNew() || user == null) {
-			response.sendRedirect("/TIW-PlayList-HTML-Pure/login.html");
-			return;
-		}
 		
 		//Check if songId is valid
 		if(songId.isEmpty() || songId == null)
@@ -155,9 +141,7 @@ public class GoToSongPage extends HttpServlet{
 	
 	public void destroy() {
 		try {
-			if (connection != null) {
-				connection.close();
-			}
+			ConnectionHandler.closeConnection(connection);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
