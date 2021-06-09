@@ -7,6 +7,8 @@
  */
 (function() {
     document.getElementById("loginButton").addEventListener('click' , (e) => {
+
+        console.log("Login event!");
         //Take the closest form
         let form = e.target.closest("form");
 
@@ -16,6 +18,7 @@
             //Make the call to the server
             makeCall("POST" , 'CheckLogin' , e.target.closest("form") ,
                 function (x) {
+                    console.log("CallBack function called");
                     if(x.readyState == XMLHttpRequest.DONE){
                         let message = x.responseText;
                         switch(x.status){
