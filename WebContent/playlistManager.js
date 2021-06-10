@@ -26,7 +26,7 @@
             let self = this;
 
             //Ask the playList table to the server
-            makeCall("GET" , "getPlaylistsList" , null ,
+            makeCall("GET" , "GetPlaylistsList" , null ,
                 function(request) {
                     if(request.readyState == XMLHttpRequest.DONE){
                         switch(request.status){
