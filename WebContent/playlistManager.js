@@ -1,10 +1,23 @@
 {
+    //Page components
+    let playlistList;
+    let pageOrchestrator = new PageOrchestrator();
+
+    window.addEventListener("load" , () => {
+        if(sessionStorage.getItem("userName") == null){
+            window.location.href = "login.html";
+        }else{
+            pageOrchestrator.start();
+            pageOrchestrator.refresh();
+        }
+    } , false);
+
     /**
      * Function that initialize the personal message (the username)
      * @param username is the username to add in the html file
      * @param messageContainer is the place where add the username
      */
-    function personalMessage(username , messageContainer) {
+    function PersonalMessage(username , messageContainer) {
         this.username = username;
         this.messageContainer = messageContainer;
 
@@ -13,7 +26,14 @@
         }
     }
 
-    function playlistList(alertContainer , listContainer , listBodyContainer) {
+    /**
+     * Function that take the playlist og the user from the data base
+     * @param alertContainer is the container of the error
+     * @param listContainer is the table that contains the list
+     * @param listBodyContainer is the body of the table
+     * @constructor
+     */
+    function PlaylistList(alertContainer , listContainer , listBodyContainer) {
         this.alertContainer = alertContainer;
         this.listcontainer = listContainer;
         this.listBodyContainer = listBodyContainer;
@@ -100,19 +120,35 @@
         }
     }
 
-    function pageOrchestrator() {
+    /**
+     * It's the main controller of the application
+     * @constructor
+     */
+    function PageOrchestrator() {
         //Maybe i'll use just 1 error, not 1 for each component
         let alertContainer = document.getElementById("playlistTableError");
 
         this.start = function() {
             //Set the personal message and show it. Question: why I don't have to save the container in the object as for the userName?
-            personalMessage = new personalMessage(sessionStorage.getItem("userName") , document.getElementById("userName"));
+            personalMessage = new PersonalMessage(sessionStorage.getItem("userName") , document.getElementById("userName"));
             personalMessage.show();
 
+            //Initialize the playlist table
+            playlistList = new PlaylistList(alertContainer , document.getElementById("playlistTable") ,
+                                            document.getElementById("playlistTableBody"));
+
+            //Set the event of logout to the anchor
+            document.querySelector("a[href='Logout']").addEventListener('click', () => {
+                window.sessionStorage.removeItem('username');
+            });
         }
 
         this.refresh = function() {
+            //Reset the error
+            alertContainer.textContent = "";
 
+            //Reset the playlistList
+            //playlistList.reset();
         }
     }
 }
