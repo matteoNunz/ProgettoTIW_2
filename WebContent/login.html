@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html>
 
 	<head>
 		<meta charset = "UTF-8">
 		<title> YouMusic </title>
-		<link rel="stylesheet" type="text/css" media="all" href="CSS/mystyle.css" th:href="@{/CSS/mystyle.css}"/> <!-- th:href="@{/CSS/mystyle.css}" -->
+		<link rel="stylesheet" type="text/css" media="all" href="CSS/mystyle.css"/>
 		<script src="utils.js" charset="utf-8" defer></script>
 		<script src="login.js" charset="utf-8" defer></script>
 	</head>
@@ -22,7 +22,7 @@
 				
 				<input id="loginButton" type="button" value="login">	
 				
-				<p th:class="error" th:text="${errorMsg}"></p>	
+				<p class="error" id="error"></p>	
 			</form>
 		</fieldset>
 		

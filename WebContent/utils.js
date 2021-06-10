@@ -13,6 +13,7 @@
 function makeCall(method, url, formElement, callBack, reset = true) {
     let request = new XMLHttpRequest(); // visible by closure
     request.onreadystatechange = function() {
+    	console.log("Request is onReadyStateChange");
         callBack(request);
     }; // closure
 
@@ -21,10 +22,12 @@ function makeCall(method, url, formElement, callBack, reset = true) {
         request.send();
     } else {
         //Send the form
+        console.log("Form sent");
         request.send(new FormData(formElement));
     }
     //If there is a form and reset is true -> reset the fields of the form
     if (formElement !== null && reset === true) {
+    	console.log("Form resetted");
         formElement.reset();
     }
 }

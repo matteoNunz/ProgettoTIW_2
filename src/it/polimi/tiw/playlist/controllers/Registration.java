@@ -2,30 +2,27 @@ package it.polimi.tiw.playlist.controllers;
 
 import java.io.IOException;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.UnavailableException;
+import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.thymeleaf.TemplateEngine;
-import org.thymeleaf.context.WebContext;
-import org.thymeleaf.templatemode.TemplateMode;
-import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
+import org.apache.commons.lang.StringEscapeUtils;
 
 import it.polimi.tiw.playlist.dao.UserDAO;
 import it.polimi.tiw.playlist.utils.ConnectionHandler;
 
 @WebServlet("/Registration")
+@MultipartConfig
 public class Registration extends HttpServlet{
 	private static final long serialVersionUID = 1L;
 	private Connection connection;
-	private TemplateEngine templateEngine;
 	
 	public Registration() {
 		super();
@@ -33,12 +30,6 @@ public class Registration extends HttpServlet{
 	
 	public void init() {
 		ServletContext context = getServletContext();
-		
-		ServletContextTemplateResolver templateResolver = new ServletContextTemplateResolver(context);
-		templateResolver.setTemplateMode(TemplateMode.HTML);
-		this.templateEngine = new TemplateEngine();
-		this.templateEngine.setTemplateResolver(templateResolver);
-		templateResolver.setSuffix(".html");
 		
 		try {
 			connection = ConnectionHandler.getConnection(context);
@@ -52,21 +43,16 @@ public class Registration extends HttpServlet{
 	}
 	
 	protected void doPost(HttpServletRequest request , HttpServletResponse response) throws ServletException,IOException{
-		String userName = request.getParameter("user");
-		String password = request.getParameter("password");
+		String userName = StringEscapeUtils.escapeJava(request.getParameter("user"));
+		String password = StringEscapeUtils.escapeJava(request.getParameter("password"));
 		
 		String error = "";
 		boolean result = false;
 		
 		//check if the parameters are not empty or null
 		if(userName == null || password == null || userName.isEmpty() || password.isEmpty()) {
-			error += "Missing parameters;";
-			String path = "registration.html";
-			ServletContext servletContext = getServletContext();
-			final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
-			ctx.setVariable("errorMsg", error);
-			templateEngine.process(path, ctx, response.getWriter());
-			//response.sendError(HttpServletResponse.SC_BAD_REQUEST, error);
+			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);//Code 400
+			response.getWriter().println("Missing parameters;");
 			return;
 		}
 		
@@ -84,12 +70,8 @@ public class Registration extends HttpServlet{
 			error += "Password too long;";
 		
 		if (!error.equals("")) {
-			String path = "registration.html";
-			ServletContext servletContext = getServletContext();
-			final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
-			ctx.setVariable("errorMsg", error);
-			templateEngine.process(path, ctx, response.getWriter());
-			//response.sendError(HttpServletResponse.SC_BAD_REQUEST, error);
+			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);//Code 400
+			response.getWriter().println(error);
 			return;
 		}
 		
@@ -99,23 +81,16 @@ public class Registration extends HttpServlet{
 			result = userDao.addUser(userName, password);
 			
 			if(result == true) {
-				//Redirect to the login page
-				String path = getServletContext().getContextPath() +  "/login.html";
-				response.sendRedirect(path);
+				//Send 200
+				response.setStatus(HttpServletResponse.SC_OK);//Code 200
 			}
 			else {
-				String path = "registration.html";
-				ServletContext servletContext = getServletContext();
-				final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
-				error += "UserName is not available";
-				ctx.setVariable("errorMsg", error);
-				templateEngine.process(path, ctx, response.getWriter());
-				return;
+				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);//Code 400
+				response.getWriter().println("Username not availabe");
 			}
 		}catch(SQLException e) {
-			e.printStackTrace();
-			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Issue with DB");
-			return;
+			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);//Code 500
+			response.getWriter().println("Internal server error, retry later");
 		}	
 	}
 	

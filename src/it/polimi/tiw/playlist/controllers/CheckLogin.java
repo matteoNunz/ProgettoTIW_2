@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.UnavailableException;
+import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -19,6 +20,7 @@ import it.polimi.tiw.playlist.dao.UserDAO;
 import it.polimi.tiw.playlist.utils.ConnectionHandler;
 
 @WebServlet("/CheckLogin")
+@MultipartConfig
 public class CheckLogin extends HttpServlet{
 	private static final long serialVersionUID = 1L;
 	private Connection connection;
@@ -41,6 +43,8 @@ public class CheckLogin extends HttpServlet{
 		//Take the form fields
 		String userName = StringEscapeUtils.escapeJava(request.getParameter("user"));
 		String password = StringEscapeUtils.escapeJava(request.getParameter("password"));
+		
+		System.out.println("User: " + userName + ", password: " + password);
 		
 		//check if the parameters are not empty or null -> if not, send the error and set the status of the response
 		if(userName == null || password == null || userName.isEmpty() || password.isEmpty()) {

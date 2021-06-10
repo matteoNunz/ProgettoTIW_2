@@ -6,6 +6,7 @@
  * Function to avoid the global scope
  */
 (function() {
+	console.log("In the global function of login.js");
     document.getElementById("loginButton").addEventListener('click' , (e) => {
 
         console.log("Login event!");
