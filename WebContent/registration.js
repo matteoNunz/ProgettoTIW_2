@@ -39,7 +39,6 @@
                 document.getElementById("error").textContent = "Password has to contain at least:4 character,1 number and 1 of the following @,# and _ ";
                 return;
             }
-            
             console.log("Validity ok");
 
             //Make the call to  the server

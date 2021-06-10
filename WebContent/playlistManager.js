@@ -1,6 +1,6 @@
 {
     //Page components
-    let playlistList;
+    var playlistList;
     let pageOrchestrator = new PageOrchestrator();
 
     window.addEventListener("load" , () => {
