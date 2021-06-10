@@ -20,7 +20,7 @@
             makeCall("POST" , "CreatePlaylist" , form ,
                 function (x) {
                     console.log("CallBack function called");
-
+                    //TODO reset in form
                     if(x.readyState == XMLHttpRequest.DONE){
                         switch (x.status){
                             case 200:
@@ -39,6 +39,7 @@
                     }
                 }
             );
+            form.reset();
         }else{
             form.reportValidity();
         }
