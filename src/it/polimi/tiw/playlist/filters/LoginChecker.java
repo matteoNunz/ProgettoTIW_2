@@ -28,7 +28,7 @@ public class LoginChecker implements Filter {
 
 		HttpSession s = req.getSession();
 		if (s.isNew() || s.getAttribute("user") == null) {
-			res.setStatus(403);
+			res.setStatus(HttpServletResponse.SC_FORBIDDEN);//Code 403
 			res.setHeader("Location", loginpath);
 			System.out.print("Login checker FAILED...\n");
 			return;

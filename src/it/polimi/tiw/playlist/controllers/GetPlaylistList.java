@@ -54,6 +54,8 @@ public class GetPlaylistList extends HttpServlet {
 		String error1 = "";
 		String error2 = "";
 		
+		System.out.println("Getting the playlist list");
+		
 		PlaylistDAO pDao = new PlaylistDAO(connection);
 		
 		//!!!!!!!!!!!!Maybe useless!!!!!!!!!!!!!!!!!!!
@@ -77,7 +79,7 @@ public class GetPlaylistList extends HttpServlet {
 		response.setStatus(HttpServletResponse.SC_OK);//Code 200
 		
 		//Create the jSon with the answer
-		Gson gSon = new GsonBuilder().setDateFormat("dd MM yyyy").create();
+		Gson gSon = new GsonBuilder().setDateFormat("dd-MM-yyyy").create();
 		String jSon = gSon.toJson(playlists);
 		
 		response.setContentType("application/json");

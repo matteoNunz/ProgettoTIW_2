@@ -46,7 +46,7 @@
             let self = this;
 
             //Ask the playList table to the server
-            makeCall("GET" , "GetPlaylistsList" , null ,
+            makeCall("GET" , "GetPlaylistList" , null ,
                 function(request) {
                     if(request.readyState == XMLHttpRequest.DONE){
                         switch(request.status){
@@ -56,7 +56,7 @@
                                     self.alertContainer.textContent = "No playlist yet";
                                     return;
                                 }
-                                this.update(playlistsToShow);
+                                self.update(playlistsToShow);
                                 break;
 
                             case 403:
@@ -136,6 +136,8 @@
             //Initialize the playlist table
             playlistList = new PlaylistList(alertContainer , document.getElementById("playlistTable") ,
                                             document.getElementById("playlistTableBody"));
+        	//Just for verify
+        	playlistList.show();
 
             //Set the event of logout to the anchor
             document.querySelector("a[href='Logout']").addEventListener('click', () => {
