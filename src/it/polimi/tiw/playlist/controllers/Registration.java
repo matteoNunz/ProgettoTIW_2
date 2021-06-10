@@ -49,6 +49,8 @@ public class Registration extends HttpServlet{
 		String error = "";
 		boolean result = false;
 		
+		System.out.println("Server is processing the registration request");
+		
 		//check if the parameters are not empty or null
 		if(userName == null || password == null || userName.isEmpty() || password.isEmpty()) {
 			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);//Code 400
