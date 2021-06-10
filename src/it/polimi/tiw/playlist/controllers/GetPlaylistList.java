@@ -20,27 +20,22 @@ import org.thymeleaf.context.WebContext;
 import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 import it.polimi.tiw.playlist.beans.Playlist;
 import it.polimi.tiw.playlist.beans.User;
 import it.polimi.tiw.playlist.dao.PlaylistDAO;
 import it.polimi.tiw.playlist.utils.ConnectionHandler;
 
-@WebServlet("/GoToHomePage")
-public class GoToHomePage extends HttpServlet {
+@WebServlet("/GetPlaylistList")
+public class GetPlaylistList extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
 	private Connection connection;
-	private TemplateEngine templateEngine;
 	
 	public void init() {
 		ServletContext context = getServletContext();
-		
-		//Initializing the template engine
-		ServletContextTemplateResolver templateResolver = new ServletContextTemplateResolver(context);
-		templateResolver.setTemplateMode(TemplateMode.HTML);
-		this.templateEngine = new TemplateEngine();
-		this.templateEngine.setTemplateResolver(templateResolver);
-		templateResolver.setSuffix(".html");
 		
 		try {
 			connection = ConnectionHandler.getConnection(context);
@@ -50,7 +45,8 @@ public class GoToHomePage extends HttpServlet {
 	}
 	
 	public void doGet(HttpServletRequest request , HttpServletResponse response)throws ServletException,IOException{
-		//Need to take the user from the session and make the control
+		
+		//Take the user from the session
 		HttpSession s = request.getSession();
 		User user = (User) s.getAttribute("user");
 		ArrayList<Playlist> playlists = null;
@@ -60,6 +56,7 @@ public class GoToHomePage extends HttpServlet {
 		
 		PlaylistDAO pDao = new PlaylistDAO(connection);
 		
+		//!!!!!!!!!!!!Maybe useless!!!!!!!!!!!!!!!!!!!
 		//In case of forward from CreatePlaylist , CreateSong and GoToPlayistPage 
 		if(((String) request.getAttribute("error")) != null) 
 			error = (String) request.getAttribute("error");
@@ -68,21 +65,24 @@ public class GoToHomePage extends HttpServlet {
 		else if(((String) request.getAttribute("error2")) != null) //from GoToPlaylistPage
 			error2 = (String) request.getAttribute("error2");
 		
+		
 		try {
 			playlists = pDao.findPlaylist(user.getId());
 		}catch(SQLException e) {
-			response.sendError(HttpServletResponse.SC_BAD_GATEWAY, "Failure in database extraction");
+			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);//Code 500
+			response.getWriter().println("Internal server error, retry later");
+			return;
 		}
 		
-		String path = "/WEB-INF/HomePage.html";
-		ServletContext servletContext = getServletContext();
-		final WebContext ctx = new WebContext(request , response , servletContext , request.getLocale());
-		ctx.setVariable("playlists" , playlists);
-		ctx.setVariable("user", user);
-		ctx.setVariable("errorMsg", error);
-		ctx.setVariable("errorMsg1", error1);
-		ctx.setVariable("errorMsg2", error2);
-		templateEngine.process(path , ctx , response.getWriter());
+		response.setStatus(HttpServletResponse.SC_OK);//Code 200
+		
+		//Create the jSon with the answer
+		Gson gSon = new GsonBuilder().setDateFormat("dd MM yyyy").create();
+		String jSon = gSon.toJson(playlists);
+		
+		response.setContentType("application/json");
+		response.setCharacterEncoding("UTF-8");
+		response.getWriter().write(jSon);
 	}
 	
 	public void doPost(HttpServletRequest request , HttpServletResponse response)throws ServletException,IOException{
