@@ -3,44 +3,33 @@ package it.polimi.tiw.playlist.controllers;
 import java.sql.Date;
 import java.io.IOException;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.UnavailableException;
+import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.thymeleaf.TemplateEngine;
-import org.thymeleaf.templatemode.TemplateMode;
-import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
+import org.apache.commons.lang.StringEscapeUtils;
 
 import it.polimi.tiw.playlist.beans.User;
 import it.polimi.tiw.playlist.dao.PlaylistDAO;
 import it.polimi.tiw.playlist.utils.ConnectionHandler;
 
-
 @WebServlet("/CreatePlaylist")
+@MultipartConfig
 public class CreatePlaylist extends HttpServlet{
 
 	private static final long serialVersionUID = 1L;
 	private Connection connection;
-	private TemplateEngine templateEngine;
 	
 	public void init() {
 		ServletContext context = getServletContext();
-		
-		//Initializing the template engine
-		ServletContextTemplateResolver templateResolver = new ServletContextTemplateResolver(context);
-		templateResolver.setTemplateMode(TemplateMode.HTML);
-		this.templateEngine = new TemplateEngine();
-		this.templateEngine.setTemplateResolver(templateResolver);
-		templateResolver.setSuffix(".html");
 		
 		try {
 			connection = ConnectionHandler.getConnection(context);
@@ -49,8 +38,12 @@ public class CreatePlaylist extends HttpServlet{
 		}
 	}
 	
+	public void doGet(HttpServletRequest request , HttpServletResponse response)throws ServletException,IOException{
+		doPost(request , response);
+	}
+	
 	public void doPost(HttpServletRequest request , HttpServletResponse response)throws ServletException,IOException{
-		String title = request.getParameter("title");
+		String title = StringEscapeUtils.escapeJava(request.getParameter("name"));
 		Date creationDate = new Date(System.currentTimeMillis());
 		String error = "";
 
@@ -61,12 +54,11 @@ public class CreatePlaylist extends HttpServlet{
 			error += "Title is empty";
 		else if(title.length() > 45)
 			error += "Title is too long";
+		
 		if(!error.equals("")){
-			request.getSession().setAttribute("error", error);
-			String path = getServletContext().getContextPath() + "/GoToHomePage";
-			
-			RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(path);
-			dispatcher.forward(request,response);
+			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);//Code 400	
+			response.getWriter().println(error);
+			return;
 		}
 		
 		PlaylistDAO pDao = new PlaylistDAO(connection);
@@ -75,23 +67,18 @@ public class CreatePlaylist extends HttpServlet{
 			boolean result = pDao.createPlaylist(title, creationDate , user.getId());
 			
 			if(result == true) {
-				String path = getServletContext().getContextPath() + "/GoToHomePage";
-				response.sendRedirect(path);
+				response.setStatus(HttpServletResponse.SC_OK);//Code 200
 			}
 			else {
-				error += "Title " + title + " is already used";
-				request.setAttribute("error", error);
-				String path = "/GoToHomePage";
-
-				RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(path);
-				dispatcher.forward(request,response);
+				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);//Code 400	
+				response.getWriter().println("PlayList name already used");
+				System.out.println("Playlist name already used");
 			}
 		}catch(SQLException e) {
-			e.printStackTrace();
-			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Issue with DB!!!!!");
+			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);//Code 500
+			response.getWriter().println("Internal server error, retry later");
 		}
 	}
-	
 	
 	public void destroy() {
 		try {
@@ -101,10 +88,3 @@ public class CreatePlaylist extends HttpServlet{
 		}
 	}
 }
-
-
-
-
-
-
-

@@ -34,7 +34,8 @@
                                 break;
 
                             default:
-                                document.getElementById("createPlaylistError").textContent = x.textContent;
+                                document.getElementById("createPlaylistError").textContent = x.responseText;
+                                break;
                         }
                     }
                 }
