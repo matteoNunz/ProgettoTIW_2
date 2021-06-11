@@ -7,12 +7,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
  
 import java.util.Calendar;
 
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.UnavailableException;
@@ -23,6 +21,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.Part;
+
+import org.apache.commons.lang.StringEscapeUtils;
 
 import it.polimi.tiw.playlist.beans.User;
 import it.polimi.tiw.playlist.dao.SongDAO;
@@ -55,16 +55,22 @@ public class CreateSong extends HttpServlet{
 	
 	public void doPost(HttpServletRequest request , HttpServletResponse response)throws ServletException,IOException{
 		//Take the request parameters
-		String songTitle = request.getParameter("title");
+		String songTitle = StringEscapeUtils.escapeJava("title");
+		String albumTitle = StringEscapeUtils.escapeJava("albumTitle");
+		String singer = StringEscapeUtils.escapeJava("singer");
+		
 		String genre = request.getParameter("genre");
-		String albumTitle = request.getParameter("albumTitle");
-		String singer = request.getParameter("singer");
 		String date = request.getParameter("date");
 		
 		Part albumImg = request.getPart("albumImg");
 		Part songFile = request.getPart("songFile");
 		
 		int publicationYear = 0;
+		
+		System.out.println("Creating a new song");
+		System.out.println("Genre is: " + genre);
+		System.out.println("Publication year is: " + date);
+		
 		
 		HttpSession s = request.getSession();
 		User user = (User) s.getAttribute("user");
@@ -134,11 +140,8 @@ public class CreateSong extends HttpServlet{
 		
 		//If an error occurred, redirect with errorMsg1 to the template engine  
 		if(!error.equals("")) {
-			request.setAttribute("error1", error);
-			String path = "/GoToHomePage";
-
-			RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(path);
-			dispatcher.forward(request,response);
+			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);//Code 400	
+			response.getWriter().println(error);
 			return;
 		}
 		
@@ -182,11 +185,8 @@ public class CreateSong extends HttpServlet{
 		
 		//If an error occurred, redirect with errorMsg1 to the template engine  
 		if(!error.equals("")) {
-			request.setAttribute("error1", error);
-			String path = "/GoToHomePage";
-
-			RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(path);
-			dispatcher.forward(request,response);
+			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);//Code 400	
+			response.getWriter().println(error);
 			return;
 		}
 		
@@ -210,11 +210,8 @@ public class CreateSong extends HttpServlet{
 		
 		//If an error occurred, redirect with errorMsg1 to the template engine  
 		if(!error.equals("")) {
-			request.setAttribute("error1", error);
-			String path = "/GoToHomePage";
-
-			RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(path);
-			dispatcher.forward(request,response);
+			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);//Code 400	
+			response.getWriter().println(error);
 			return;
 		}
 		
@@ -226,8 +223,7 @@ public class CreateSong extends HttpServlet{
 			boolean result = sDao.createSongAndAlbum(user.getId() , songTitle, genre, albumTitle, singer, publicationYear, fileNameImg , fileNameSong);
 			
 			if(result == true) {
-				String path = getServletContext().getContextPath() + "/GoToHomePage";
-				response.sendRedirect(path);
+				response.setStatus(HttpServletResponse.SC_OK);//Code 200	
 			}
 			else {
 				//Delete uploaded file if something got wrong during the updating of the dataBase
@@ -238,13 +234,9 @@ public class CreateSong extends HttpServlet{
 				}
 				file = new File(outputPathImg);
 				file.delete();
-				
-				error += "Impossible upload file in the database , try later";
-				request.setAttribute("error1", error);
-				String path = getServletContext().getContextPath() + "/GoToHomePage";
 
-				RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(path);
-				dispatcher.forward(request,response);
+				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);//Code 400	
+				response.getWriter().println("Impossible upload file in the database , try later");
 			}
 			
 		}catch(SQLException e) {
@@ -256,8 +248,8 @@ public class CreateSong extends HttpServlet{
 			}
 			file = new File(outputPathImg);
 			file.delete();
-			e.printStackTrace();
-			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "An arror occurred uploading the db, retry later");
+			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);//Code 500	
+			response.getWriter().println( "An arror occurred uploading the db, retry later");
 		}
 	}
 	

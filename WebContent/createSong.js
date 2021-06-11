@@ -23,8 +23,8 @@
             let albumTitle = document.getElementById("albumTitle").value;
             let singer = document.getElementById("singer").value;
             let publicationYear = document.getElementById("date").value;
-            let imageFile = document.getElementById("imageFile").value;
-            let songFile = document.getElementById("songFile").value;
+            let imageFile = document.getElementById("imageFile");
+            let songFile = document.getElementById("songFile");
 
             //Check if the publicationYear is valid
             if(isNaN(publicationYear)){
@@ -48,8 +48,8 @@
                 return;
             }
 
-            //Check the input files
-            if(!(imageFile.length > 0)){
+            //TODO Check the input files
+            /*if(!(imageFile.length > 0)){
                 document.getElementById("songError").textContent = "Image not valid";
                 return;
             }
@@ -64,10 +64,7 @@
             if(songFile.length > 10240000){
                 document.getElementById("songError").textContent = "Song too big";
                 return;
-            }
-
-            console.log("Image type is: " + imageFile.type);
-            console.log("Song type is: " + songFile.type);
+            }*/
 
             makeCall("POST" , "CreateSong" , form ,
                 function (x) {
