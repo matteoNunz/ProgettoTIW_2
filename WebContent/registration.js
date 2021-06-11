@@ -23,7 +23,6 @@
             let user = document.getElementById("user").value;
             let password = document.getElementById("password").value;
 
-			console.log("User length is: " + user.length);
             if(user.length > 45 || password.length > 45){
             	console.log("Values too long");
                 document.getElementById("error").textContent = "username e/o password too long";
