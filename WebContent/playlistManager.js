@@ -156,12 +156,13 @@
         this.show = function() {
             let self = this;
 
-            makeCall("GET" , "GoToPlayListPage" , null ,
+            makeCall("GET" , "GoToPlayListPage?playlistId=" + playlistId , null ,
                 function(request) {
                     if(request.readyState == XMLHttpRequest.DONE){
                         switch(request.status){
                             case 200:
                                 let songs = JSON.parse(request.responseText);
+                                console.log("Number of songs in the playList is: " + songs.length);
                                 if(songs.length == 0){
                                     self.alertContainer.textContent = "No songs yet";
                                     return;
@@ -281,7 +282,7 @@
                                             document.getElementById("playlistTableBody"));
 
             //Initialize the song in the playlist
-            songInPLayList = new songInPLayList(songInPlaylistError , document.getElementById("songTable") ,
+            songInPLayList = new SongsInPlaylist(songInPlaylistError , document.getElementById("songTable") ,
                                             document.getElementById("songTableBody") , 19);//19 just for test
 
         	//Just for verify
@@ -295,8 +296,9 @@
         }
 
         this.refresh = function() {
-            //Reset the error
-            alertContainer.textContent = "";
+            //Reset the errors
+            playlistTableError.textContent = "";
+            songInPlaylistError.textContent = "";
 
             //Reset the playlistList
             //playlistList.reset();
