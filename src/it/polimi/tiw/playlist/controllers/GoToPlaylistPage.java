@@ -1,6 +1,7 @@
 package it.polimi.tiw.playlist.controllers;
 
 import java.io.IOException;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -16,10 +17,16 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
 import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
+
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 
 import it.polimi.tiw.playlist.beans.Playlist;
 import it.polimi.tiw.playlist.beans.SongDetails;
@@ -128,9 +135,11 @@ public class GoToPlaylistPage extends HttpServlet{
 		try {
 			
 			ArrayList<SongDetails> songsInPlaylist = sDao.getSongTitleAndImg(id);
-			ArrayList<SongDetails> songsNotInPlaylist = sDao.getSongsNotInPlaylist(id , user.getId());
-			String title = pDao.findPlayListTitleById(id);
+			//Send this with an other servlet
+			//ArrayList<SongDetails> songsNotInPlaylist = sDao.getSongsNotInPlaylist(id , user.getId());
+			//String title = pDao.findPlayListTitleById(id);
 			
+			/*Done in the view
 			boolean next = false;
 			
 			if(block * 5 + 5 > songsInPlaylist.size()) {
@@ -148,29 +157,37 @@ public class GoToPlaylistPage extends HttpServlet{
 					SongDetails song = songsInPlaylist.get(i);
 					songs.add(song);
 				}	
-			}
+			}*/
 			
+			/*Now the view has the playlist id 
 			Playlist p = new Playlist();
 			p.setId(id);
-			p.setTitle(title);
+			p.setTitle(title);*/
 			
-			String path = "/WEB-INF/PlaylistPage.html";
-			ServletContext servletContext = getServletContext();
-			final WebContext ctx = new WebContext(request , response , servletContext , request.getLocale());
-			ctx.setVariable("user" , user);
-			ctx.setVariable("songsInPlaylist", songs);
-			ctx.setVariable("songsNotInPlaylist", songsNotInPlaylist);
-			ctx.setVariable("playlist", p);
-			ctx.setVariable("block", block);
-			ctx.setVariable("next", next);
+			//Send all the song of the playList
+			JSONArray jArray = new JSONArray();
+			JSONObject jSonObject = new JSONObject();
 			
-			ctx.setVariable("errorMsg", error);
-			ctx.setVariable("errorMsg1", error1);
-			templateEngine.process(path , ctx , response.getWriter());
+			
+			for(SongDetails song : songsInPlaylist) {
+				jSonObject.put("songId", song.getId());
+				jSonObject.put("songTitle" , song.getSongTitle());
+				jSonObject.put("fileName" , song.getImgFile());
+				
+				jArray.put(jSonObject);
+			}
+			
+			response.setStatus(HttpServletResponse.SC_OK);//Code 200
+			response.setContentType("application/json");
+			response.setCharacterEncoding("UTF-8");
+			response.getWriter().println(jArray);
 			
 		}catch(SQLException e) {
-			e.printStackTrace();
-			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "An arror occurred with the db, retry later");
+			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);//Code 500
+			response.getWriter().println("Internal server error, retry later");
+		}catch(JSONException e) {
+			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);//Code 500
+			response.getWriter().println("Internal server error, error during the creation of the response");
 		}
 	}
 

@@ -2,6 +2,7 @@ package it.polimi.tiw.playlist.controllers;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.net.URLDecoder;
 import java.nio.file.Files;
 import java.sql.Connection;
@@ -66,6 +67,7 @@ public class GetSong extends HttpServlet{
 			//Set an error
 			return;
 		}
+		
 		
 		//Set headers for browser
 		response.setHeader("Content-Type", getServletContext().getMimeType(filename));
