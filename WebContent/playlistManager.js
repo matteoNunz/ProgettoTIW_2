@@ -1,6 +1,8 @@
 {
     //Page components
     var playlistList;
+    var songInPLayList;
+    let personalMessage;
     let pageOrchestrator = new PageOrchestrator();
 
     window.addEventListener("load" , () => {
@@ -234,11 +236,20 @@
                 imageCell.appendChild(image);
                 //TODO how add the image?? With an attribute?
 
+                let src = image.src;
+                makeCall("GET" , "GetImage?" + song.fileName , null ,
+                    function(x) {
+                        if(x.readyState == XMLHttpRequest.DONE){
+                            src = x.response;
+                        }
+                    }
+                );
+
                 anchor = document.createElement("a");
                 songNameCell.appendChild(anchor);
-                linkText = document.createTextNode(songToShow.title);
+                linkText = document.createTextNode(songToShow.songTitle);
                 anchor.appendChild(linkText);
-                anchor.setAttribute("songId" , songToShow.id);
+                anchor.setAttribute("songId" , songToShow.songId);
                 anchor.href = "#";
                 anchor.addEventListener("click" , (e) => {
                    //TODO
@@ -257,7 +268,8 @@
      */
     function PageOrchestrator() {
         //Maybe i'll use just 1 error, not 1 for each component
-        let alertContainer = document.getElementById("playlistTableError");
+        let playlistTableError = document.getElementById("playlistTableError");
+        let songInPlaylistError = document.getElementById("songTableError");
 
         this.start = function() {
             //Set the personal message and show it. Question: why I don't have to save the container in the object as for the userName?
@@ -265,10 +277,16 @@
             personalMessage.show();
 
             //Initialize the playlist table
-            playlistList = new PlaylistList(alertContainer , document.getElementById("playlistTable") ,
+            playlistList = new PlaylistList(playlistTableError , document.getElementById("playlistTable") ,
                                             document.getElementById("playlistTableBody"));
+
+            //Initialize the song in the playlist
+            songInPLayList = new songInPLayList(songInPlaylistError , document.getElementById("songTable") ,
+                                            document.getElementById("songTableBody") , 19);//19 just for test
+
         	//Just for verify
         	playlistList.show();
+        	songInPLayList.show();
 
             //Set the event of logout to the anchor
             document.querySelector("a[href='Logout']").addEventListener('click', () => {
