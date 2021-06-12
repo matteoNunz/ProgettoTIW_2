@@ -27,6 +27,20 @@
     }
 
     /**
+     * FUnction that show the name of the current playlist the user is watching
+     * @param playlistName is the name of the playlist
+     * @param messageContainer id the tag where put the name of the playlist
+     */
+    function PlaylistMessage(playlistName , messageContainer){
+        this.playlistName = playlistName;
+        this.messageContainer = messageContainer;
+
+        this.show = function() {
+            this.messageContainer.textContent = this.playlistName;
+        }
+    }
+
+    /**
      * Function that take the playlist og the user from the data base
      * @param alertContainer is the container of the error
      * @param listContainer is the table that contains the list
@@ -117,6 +131,123 @@
             });
             //Show the table
             this.listcontainer.style.visibility = "visible";
+        }
+    }
+
+    /**
+     * Function that takes all the songs in the playlist specified by playlistId
+     * @param alertContainer is the container where set the error
+     * @param listContainer is the container of the table
+     * @param listBodyContainer is the body of the table
+     * @param playlistId is the playlist the user wants to see the songs
+     */
+    function SongsInPlaylist(alertContainer , listContainer , listBodyContainer , playlistId){
+        this.alertContainer = alertContainer;
+        this.listContainer = listContainer;
+        this.listBodyContainer = listBodyContainer;
+        this.playlistId = playlistId;
+
+        this.reset = function() {
+            this.listContainer.style.visibility = "hidden";
+        }
+
+        this.show = function() {
+            let self = this;
+
+            makeCall("GET" , "GoToPlayListPage" , null ,
+                function(request) {
+                    if(request.readyState == XMLHttpRequest.DONE){
+                        switch(request.status){
+                            case 200:
+                                let songs = JSON.parse(request.responseText);
+                                if(songs.length == 0){
+                                    self.alertContainer.textContent = "No songs yet";
+                                    return;
+                                }
+                                self.update(songs , 0);
+                                break;
+
+                            case 403:
+                                //Redirect to login.html and remove the username from the session
+                                window.location.href = request.getResponseHeader("Location");
+                                window.sessionStorage.removeItem("userName");
+                                break;
+
+                            default:
+                                self.alertContainer.textContent = request.responseText;
+                                break;
+                        }
+                    }
+                }
+            );
+        }
+
+        this.update = function(songs , section) {
+            //Elements of the table
+            let row, internalTableCell , imageRow , imageCell, songNameRow , songNameCell, internalTable , anchor, linkText , image;
+            //Save this to make it visible in the function
+            let self = this;
+            //Empty the body of the table
+            this.listBodyContainer.innerHTML = "";
+
+            let next = false;
+
+            //Check section and set next
+            if (section < 0) {
+                section = 0;
+            }
+            if (section * 5 + 5 > songs.size()) {
+                section = (songs.size() / 5);
+            }
+            if ((section * 5 + 5) < songs.size()) {
+                next = true;
+            }
+
+            let songsToShow;
+
+            if (songs.size() >= section * 5 + 5)
+                songsToShow = songs.slice(section * 5, section * 5 + 5); // [)
+            else
+                songsToShow = songs.slice(section * 5, songs.size()); // [)
+
+            //Create the main row of the external table
+            row = document.createElement("tr");
+
+            songsToShow.forEach( function (songToShow){
+                internalTableCell = document.createElement("td");
+                internalTable = document.createElement("table");
+
+                internalTableCell.appendChild(internalTable);
+
+                //Row for the image
+                imageRow = document.createElement("tr");
+                //Row for the song title
+                songNameRow = document.createElement("tr");
+
+                imageCell = document.createElement("td");
+                songNameCell = document.createElement("td");
+
+                imageRow.appendChild(imageCell);
+                songNameRow.appendChild(songNameCell);
+
+                image = document.createElement("src");
+                imageCell.appendChild(image);
+                //TODO how add the image?? With an attribute?
+
+                anchor = document.createElement("a");
+                songNameCell.appendChild(anchor);
+                linkText = document.createTextNode(songToShow.title);
+                anchor.appendChild(linkText);
+                anchor.setAttribute("songId" , songToShow.id);
+                anchor.href = "#";
+                anchor.addEventListener("click" , (e) => {
+                   //TODO
+                   //songDetails.show(e.target.getAttribute("songId"));
+                });
+
+                row.appendChild(internalTableCell);
+            });
+            self.listBodyContainer.appendChild(row);
         }
     }
 
