@@ -1,7 +1,7 @@
 {
     //Page components
     var playlistList;
-    var songInPLayList;
+    var songsInPLayList;
     let personalMessage;
     let pageOrchestrator = new PageOrchestrator();
 
@@ -124,6 +124,8 @@
                 anchor.addEventListener("click" , (e) => {
                     //TODO
                     //playlistDetails.show(e.target.getAttribute("playlistId"));
+                    songsInPLayList.setPlaylistId(anchor.getAttribute("playlistId"));
+                    songsInPLayList.show();
                 });
                 //Disable the href of the anchor
                 anchor.href = "#";
@@ -133,6 +135,19 @@
             });
             //Show the table
             this.listcontainer.style.visibility = "visible";
+        }
+
+        this.autoClick = function(playlistId) {
+            let e = new Event("click");
+            let selector = document.querySelector("a[playlistId= " + playlistId + "']");
+            //Take the first element or the specified playlist
+            let anchorToClick = (playlistId) ?
+                document.querySelector("a[playlistId= " + playlistId + "']") :
+                this.listBodyContainer.querySelectorAll("a")[0];
+
+            if(anchorToClick){
+                anchorToClick.dispatchEvent(e);
+            }
         }
     }
 
@@ -261,6 +276,10 @@
             });
             self.listBodyContainer.appendChild(row);
         }
+
+        this.setPlaylistId = function(newId) {
+            this.playlistId = newId;
+        }
     }
 
     /**
@@ -282,12 +301,13 @@
                                             document.getElementById("playlistTableBody"));
 
             //Initialize the song in the playlist
-            songInPLayList = new SongsInPlaylist(songInPlaylistError , document.getElementById("songTable") ,
+            songsInPLayList = new SongsInPlaylist(songInPlaylistError , document.getElementById("songTable") ,
                                             document.getElementById("songTableBody") , 19);//19 just for test
 
         	//Just for verify
         	playlistList.show();
-        	songInPLayList.show();
+        	//songInPLayList.show();
+            playlistList.autoClick();a
 
             //Set the event of logout to the anchor
             document.querySelector("a[href='Logout']").addEventListener('click', () => {
