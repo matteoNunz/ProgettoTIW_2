@@ -52,6 +52,8 @@ public class GoToPlaylistPage extends HttpServlet{
 		int id = -1;
 		int block = 0;
 		
+		System.out.println("Getting the song in playlist " + playlistId);
+		
 		HttpSession s = request.getSession();
 		
 		//Take the user

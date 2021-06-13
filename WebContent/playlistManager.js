@@ -53,6 +53,8 @@
         this.alertContainer = alertContainer;
         this.listcontainer = listContainer;
         this.listBodyContainer = listBodyContainer;
+        
+        let self = this;
 
         this.reset = function() {
             this.listcontainer.style.visibility = "hidden";
@@ -121,6 +123,7 @@
                 linkText = document.createTextNode("Open");
                 anchor.appendChild(linkText);
                 anchor.setAttribute("playlistId" , playlist.id);
+                console.log("Initializing row with playlistId " + playlist.id);
                 anchor.addEventListener("click" , (e) => {
                     //TODO
                     //playlistDetails.show(e.target.getAttribute("playlistId"));
@@ -135,15 +138,24 @@
             });
             //Show the table
             this.listcontainer.style.visibility = "visible";
+            
+            console.log("The number of anchor in this body is: " + this.listBodyContainer.querySelectorAll("a").length);
         }
 
         this.autoClick = function(playlistId) {
             let e = new Event("click");
-            let selector = "a[playlistId= " + playlistId + "']";
+            let selector = "a[playlistId=" + playlistId + "']";
             //Take the first element or the specified playlist
             let anchorToClick = (playlistId) ?
                 document.querySelector(selector) :
-                this.listBodyContainer.querySelectorAll("a")[0];
+                self.listBodyContainer.querySelectorAll("a")[0];           
+                
+                
+            console.log("The number of anchor in this body is: " + this.listBodyContainer.querySelectorAll("a").length);
+            console.log("AutoClick select playlist with id: " + this.listBodyContainer.querySelectorAll("a")[0]);    
+            console.log("AutoClick select playlist with id: " + anchorToClick.getAttribute("playlistId"));
+                
+            
 
             if(anchorToClick){
                 anchorToClick.dispatchEvent(e);
@@ -307,7 +319,6 @@
         	//Just for verify
         	playlistList.show();
         	//songInPLayList.show();
-            playlistList.autoClick();
 
             //Set the event of logout to the anchor
             document.querySelector("a[href='Logout']").addEventListener('click', () => {
@@ -319,6 +330,8 @@
             //Reset the errors
             playlistTableError.textContent = "";
             songInPlaylistError.textContent = "";
+            
+            playlistList.autoClick();
 
             //Reset the playlistList
             //playlistList.reset();
