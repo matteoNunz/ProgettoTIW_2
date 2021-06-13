@@ -302,12 +302,12 @@
 
             //Initialize the song in the playlist
             songsInPLayList = new SongsInPlaylist(songInPlaylistError , document.getElementById("songTable") ,
-                                            document.getElementById("songTableBody") , 19);//19 just for test
+                                            document.getElementById("songTableBody") , null);//19 just for test
 
         	//Just for verify
         	playlistList.show();
         	//songInPLayList.show();
-            playlistList.autoClick();a
+            playlistList.autoClick();
 
             //Set the event of logout to the anchor
             document.querySelector("a[href='Logout']").addEventListener('click', () => {
