@@ -139,10 +139,10 @@
 
         this.autoClick = function(playlistId) {
             let e = new Event("click");
-            let selector = document.querySelector("a[playlistId= " + playlistId + "']");
+            let selector = "a[playlistId= " + playlistId + "']";
             //Take the first element or the specified playlist
             let anchorToClick = (playlistId) ?
-                document.querySelector("a[playlistId= " + playlistId + "']") :
+                document.querySelector(selector) :
                 this.listBodyContainer.querySelectorAll("a")[0];
 
             if(anchorToClick){
