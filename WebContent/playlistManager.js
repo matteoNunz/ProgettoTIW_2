@@ -60,7 +60,7 @@
             this.listcontainer.style.visibility = "hidden";
         }
 
-        this.show = function() {
+        this.show = function(next) {
             let self = this;
 
             //Ask the playList table to the server
@@ -75,6 +75,10 @@
                                     return;
                                 }
                                 self.update(playlistsToShow);
+                                //Simulate a click with autoClick function
+                                if(next){
+                                    next();
+                                }
                                 break;
 
                             case 403:
@@ -125,10 +129,7 @@
                 anchor.setAttribute("playlistId" , playlist.id);
                 console.log("Initializing row with playlistId " + playlist.id);
                 anchor.addEventListener("click" , (e) => {
-                    //TODO
-                    //playlistDetails.show(e.target.getAttribute("playlistId"));
-                    songsInPLayList.setPlaylistId(anchor.getAttribute("playlistId"));
-                    songsInPLayList.show();
+                    songsInPLayList.show(anchor.getAttribute("playlistId"));
                 });
                 //Disable the href of the anchor
                 anchor.href = "#";
@@ -149,13 +150,10 @@
             let anchorToClick = (playlistId) ?
                 document.querySelector(selector) :
                 self.listBodyContainer.querySelectorAll("a")[0];           
-                
-                
+
             console.log("The number of anchor in this body is: " + this.listBodyContainer.querySelectorAll("a").length);
             console.log("AutoClick select playlist with id: " + this.listBodyContainer.querySelectorAll("a")[0]);    
             console.log("AutoClick select playlist with id: " + anchorToClick.getAttribute("playlistId"));
-                
-            
 
             if(anchorToClick){
                 anchorToClick.dispatchEvent(e);
@@ -170,17 +168,18 @@
      * @param listBodyContainer is the body of the table
      * @param playlistId is the playlist the user wants to see the songs
      */
-    function SongsInPlaylist(alertContainer , listContainer , listBodyContainer , playlistId){
+    function SongsInPlaylist(alertContainer , listContainer , listBodyContainer){
         this.alertContainer = alertContainer;
         this.listContainer = listContainer;
         this.listBodyContainer = listBodyContainer;
-        this.playlistId = playlistId;
+        this.playlistId = null;
 
         this.reset = function() {
             this.listContainer.style.visibility = "hidden";
         }
 
-        this.show = function() {
+        this.show = function(playlistId) {
+            this.playlistId = playlistId;
             let self = this;
 
             makeCall("GET" , "GoToPlayListPage?playlistId=" + playlistId , null ,
@@ -288,10 +287,6 @@
             });
             self.listBodyContainer.appendChild(row);
         }
-
-        this.setPlaylistId = function(newId) {
-            this.playlistId = newId;
-        }
     }
 
     /**
@@ -314,10 +309,10 @@
 
             //Initialize the song in the playlist
             songsInPLayList = new SongsInPlaylist(songInPlaylistError , document.getElementById("songTable") ,
-                                            document.getElementById("songTableBody") , null);//19 just for test
+                                            document.getElementById("songTableBody"));
 
         	//Just for verify
-        	playlistList.show();
+        	//playlistList.show();
         	//songInPLayList.show();
 
             //Set the event of logout to the anchor
@@ -326,12 +321,17 @@
             });
         }
 
-        this.refresh = function() {
+        this.refresh = function(playlistId) {
             //Reset the errors
             playlistTableError.textContent = "";
             songInPlaylistError.textContent = "";
-            
-            playlistList.autoClick();
+
+            //Show the playlists and show the song of a playlist(the first one or the one specified by the id)
+            playlistList.show( function() {
+                playlistList.autoClick(playlistId);
+            });
+
+
 
             //Reset the playlistList
             //playlistList.reset();
