@@ -347,7 +347,7 @@
     function SongsNotInPLaylist(alertContainer , listContainer , form){
         this.alertContainer = alertContainer;
         this.listContainer = listContainer;
-        this.listBodyContainer = listBodyContainer;
+        this.listBodyContainer = form;
         this.playlistId = null;
 
         this.reset = function() {
@@ -427,12 +427,12 @@
             playlistList = new PlaylistList(playlistTableError , document.getElementById("playlistTable") ,
                                             document.getElementById("playlistTableBody"));
 
-            //Initialize the songs in the playlist
+            //Initialize the songs in the playList
             songsInPLayList = new SongsInPlaylist(songInPlaylistError , document.getElementById("songTable") ,
                                             document.getElementById("songTableBody"));
 
-            //Initialize songs not in the playlist
-            songsNotInPlaylist = SongsNotInPLaylist(document.getElementById("addSongMessage") ,
+            //Initialize songs not in the playList
+            songsNotInPlaylist = new SongsNotInPLaylist(document.getElementById("addSongMessage") ,
                 document.getElementById("addSongToPlaylist") , document.getElementById("addSongToPLayListForm"));
 
         	//Just for verify
