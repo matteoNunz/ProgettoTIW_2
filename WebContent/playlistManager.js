@@ -108,7 +108,7 @@
             //Empty the table body
             this.listBodyContainer.innerHTML = "";
 
-            playlists.forEach(  function(playlist){
+            playlists.forEach( function(playlist) {
                 //Create the row
                 row = document.createElement("tr");
 
@@ -286,10 +286,11 @@
 
                 image = document.createElement("img");
                 imageCell.appendChild(image);
+
                 //TODO how add the image?? With an attribute?
 
                 //image.src = songToShow.fileName;
-                
+
                 
                 console.log("Calling GetImage/" + songToShow.fileName);
                 
@@ -298,9 +299,6 @@
                     	console.log("CallBack function for images called");
                         if(x.readyState == XMLHttpRequest.DONE){
                         	console.log("Setting the image in src");
-                        	//console.log("Response 1: " + x);
-                        	//console.log("Response 2: " + x.response);
-                        	//console.log("Response 3: " + x.responseText);
 
                             //Convert the array buffer in bytes
                             let bytes = new Uint8Array(x.response);
@@ -324,7 +322,7 @@
                         }
                     } , true
                 );
-                
+
 
                 anchor = document.createElement("a");
                 songNameCell.appendChild(anchor);

@@ -31,7 +31,7 @@ function makeCall(method, url, formElement, callBack, isRequestingFile , reset =
     }
     //If there is a form and reset is true -> reset the fields of the form
     if (formElement !== null && reset === true) {
-    	console.log("Form resetted");
+    	console.log("Form reset");
         formElement.reset();
     }
 }
