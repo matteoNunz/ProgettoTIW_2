@@ -2,6 +2,7 @@
     //Page components
     var playlistList;
     var songsInPLayList;
+    var songsNotInPlaylist;
     let personalMessage;
     let pageOrchestrator = new PageOrchestrator();
 
@@ -133,7 +134,10 @@
                 anchor.setAttribute("playlistId" , playlist.id);
                 console.log("Initializing row with playlistId " + playlist.id);
                 anchor.addEventListener("click" , (e) => {
+                    //Show songs in the playList selected
                     songsInPLayList.show(e.target.getAttribute("playlistId"));
+                    //Show songs not in the playList selected
+                    songsNotInPlaylist.show(e.target.getAttribute("playlistId"));
                 });
                 //Disable the href of the anchor
                 anchor.href = "#";
@@ -184,7 +188,7 @@
             this.playlistId = playlistId;
             let self = this;
 
-            makeCall("GET" , "GoToPlayListPage?playlistId=" + playlistId , null ,
+            makeCall("GET" , "GetSongsInPlaylist?playlistId=" + playlistId , null ,
                 function(request) {
                     if(request.readyState == XMLHttpRequest.DONE){
                     	self.alertContainer.textContent = "";
@@ -242,15 +246,15 @@
             let songsToShow;
 
             if (songs.length >= section * 5 + 5){
-            	console.log("Case (songs.length >= section * 5 + 5)");
+            	//console.log("Case (songs.length >= section * 5 + 5)");
             	songsToShow = songs.slice(section * 5, section * 5 + 5); // [)
             }   
                
             else{
-            	console.log("Case !(songs.length >= section * 5 + 5)");
-            	console.log("Section is " + section);
-            	console.log("Songs length is " + songs.length);
-            	console.log(songs.slice(section * 5, songs.length));
+            	//console.log("Case !(songs.length >= section * 5 + 5)");
+            	//console.log("Section is " + section);
+            	//console.log("Songs length is " + songs.length);
+            	//console.log(songs.slice(section * 5, songs.length));
             	songsToShow = songs.slice(section * 5, songs.length); // [)
             }
                 
@@ -323,7 +327,6 @@
                     } , true
                 );
 
-
                 anchor = document.createElement("a");
                 songNameCell.appendChild(anchor);
                 linkText = document.createTextNode(songToShow.songTitle);
@@ -338,6 +341,71 @@
                 row.appendChild(internalTableCell);
             });
             self.listBodyContainer.appendChild(row);
+        }
+    }
+
+    function SongsNotInPLaylist(alertContainer , listContainer , form){
+        this.alertContainer = alertContainer;
+        this.listContainer = listContainer;
+        this.listBodyContainer = listBodyContainer;
+        this.playlistId = null;
+
+        this.reset = function() {
+            this.listContainer.style.visibility = "hidden";
+            this.alertContainer.textContent = "";
+        }
+
+        this.show = function(playlistId) {
+            this.playlistId = playlistId;
+            let self = this;
+
+            makeCall("GET" , "GetSongsNotInPlaylist?playlistId=" + playlistId , null ,
+                function(request) {
+                    if(request.readyState == XMLHttpRequest.DONE){
+                        self.alertContainer.textContent = "";
+                        switch(request.status){
+                            case 200:
+                                let songs = JSON.parse(request.responseText);
+
+                                if(songs.length == 0){
+                                    self.alertContainer.textContent = "All songs already in this playlist";
+                                    return;
+                                }
+                                self.update(songs);
+                                break;
+
+                            case 403:
+                                //Redirect to login.html and remove the username from the session
+                                window.location.href = request.getResponseHeader("Location");
+                                window.sessionStorage.removeItem("userName");
+                                break;
+
+                            default:
+                                self.alertContainer.textContent = request.responseText;
+                                break;
+                        }
+                    }
+                }
+            );
+        }
+
+        this.update = function(songsToShow) {
+            let self = this;
+
+            let option , select;
+
+            this.listBodyContainer.innerHTML = "";
+
+            select = form.closest("select");
+
+            //Add an option for each song
+            songsToShow.forEach(function(songToShow) {
+                option = document.createElement("option");
+                option.value = songToShow.id;
+                option.text = songToShow.songTitle;
+                select.appendChild(option);
+            });
+
         }
     }
 
@@ -359,9 +427,13 @@
             playlistList = new PlaylistList(playlistTableError , document.getElementById("playlistTable") ,
                                             document.getElementById("playlistTableBody"));
 
-            //Initialize the song in the playlist
+            //Initialize the songs in the playlist
             songsInPLayList = new SongsInPlaylist(songInPlaylistError , document.getElementById("songTable") ,
                                             document.getElementById("songTableBody"));
+
+            //Initialize songs not in the playlist
+            songsNotInPlaylist = SongsNotInPLaylist(document.getElementById("addSongMessage") ,
+                document.getElementById("addSongToPlaylist") , document.getElementById("addSongToPLayListForm"));
 
         	//Just for verify
         	//playlistList.show();
@@ -377,8 +449,10 @@
             //Reset the errors
             playlistTableError.textContent = "";
             songInPlaylistError.textContent = "";
+            document.getElementById("addSongMessage").textContent = "";
 
             //Show the playlists and show the song of a playlist(the first one or the one specified by the id)
+            //That implies the invocation of songsNotInPlaylist.show(playlistId)
             playlistList.show( function() {
                 playlistList.autoClick(playlistId);
             });

@@ -28,7 +28,7 @@ import it.polimi.tiw.playlist.dao.PlaylistDAO;
 import it.polimi.tiw.playlist.dao.SongDAO;
 import it.polimi.tiw.playlist.utils.ConnectionHandler;
 
-@WebServlet("/GoToPlayListPage")
+@WebServlet("/GetSongsInPlaylist")
 @MultipartConfig
 public class GoToPlaylistPage extends HttpServlet{
 	
