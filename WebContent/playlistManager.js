@@ -2,7 +2,7 @@
     //Page components
     var playlistList;
     var songsInPLayList;
-    var songsNotInPlaylist;
+    var songsNotInPlayList;
     let personalMessage;
     let pageOrchestrator = new PageOrchestrator();
 
@@ -137,7 +137,7 @@
                     //Show songs in the playList selected
                     songsInPLayList.show(e.target.getAttribute("playlistId"));
                     //Show songs not in the playList selected
-                    songsNotInPlaylist.show(e.target.getAttribute("playlistId"));
+                    songsNotInPlayList.show(e.target.getAttribute("playlistId"));
                 });
                 //Disable the href of the anchor
                 anchor.href = "#";
@@ -431,8 +431,8 @@
             songsInPLayList = new SongsInPlaylist(songInPlaylistError , document.getElementById("songTable") ,
                                             document.getElementById("songTableBody"));
 
-            //Initialize songs not in the playList
-            songsNotInPlaylist = new SongsNotInPLaylist(document.getElementById("addSongMessage") ,
+            //Initialize songs not in the playlist
+            songsNotInPlayList = new SongsNotInPLaylist(document.getElementById("addSongMessage") ,
                 document.getElementById("addSongToPlaylist") , document.getElementById("addSongToPLayListForm"));
 
         	//Just for verify
@@ -456,8 +456,6 @@
             playlistList.show( function() {
                 playlistList.autoClick(playlistId);
             });
-
-
 
             //Reset the playlistList
             //playlistList.reset();
