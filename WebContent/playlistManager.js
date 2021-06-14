@@ -227,7 +227,7 @@
             if (section * 5 + 5 > songs.length) {
                 section = (songs.length / 5);
                 //Save just the number before the point
-                section = parseInt(section.toString().split("."))[0];
+                section = parseInt(section.toString().split(".")[0]);
             }
             if ((section * 5 + 5) < songs.length) {
                 next = true;
