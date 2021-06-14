@@ -19,49 +19,51 @@
 		</div>
 		<br>
 		
-		<fieldset class="createSongField">
-			<form action="#">
-				Add a new song in your DataBase<br>
-				<p>Title: 					<input type="text" id="title" name="title" required></p>
-				<p>Genre:					<select id="genre" name="genre" required>
-												<option value="Dance"> Dance </option>
-												<option value="Pop">   Pop   </option>
-												<option value="Rap">   Rap   </option>
-												<option value="Rock">  Rock  </option>
-											</select></p>
-				<p>Album title: 			<input type="text" id="albumTitle" name="albumTitle" required></p>
-				<p>Singer: 					<input type="text" id="singer" name="singer" required></p>
-				<p>Album publication year: 	<input type="number" id="date" name="date" required></p>
-				<p>Album image: 			<input type="file" id="imageFile" name="albumImg" accept="image/*" required></p>
-				<p>MP3 file: 				<input type="file" id="songFile" name="songFile" accept="audio/*" required></p>
-				<p><input type="button" id="createSongButton" value="submit"></p>
-				<p class = "error" id="songError">
-			</form>
-		</fieldset>
-		<br><br>
-
-		<table class="playlistTable" id="playlistTable">
-			<thead class="playlistTableHead" id="playlistTableHead">
-				<tr>
-					<th>PlayList name</th>
-					<th>Creation date</th>
-				</tr>
-			</thead>
-
-			<tbody class="playlistTableBody" id="playlistTableBody">
-			</tbody>
-		</table>
-		<p class = "error" id="playlistTableError"></p>
-		
-		<br><br>
-		<fieldset class="createPlaylistField">
-			<form action="#">
-				Create a new playList<br>
-				<p>Title: <input type="text" id="name" name="name" required></p>
-				<p><input type="button" id="createPlaylistButton" value="submit"></p>
-				<p class = "error" id="createPlaylistError"></p>
-			</form>
-		</fieldset>
+		<div class="homePage">
+			<fieldset class="createSongField">
+				<form action="#">
+					Add a new song in your DataBase<br>
+					<p>Title: 					<input type="text" id="title" name="title" required></p>
+					<p>Genre:					<select id="genre" name="genre" required>
+													<option value="Dance"> Dance </option>
+													<option value="Pop">   Pop   </option>
+													<option value="Rap">   Rap   </option>
+													<option value="Rock">  Rock  </option>
+												</select></p>
+					<p>Album title: 			<input type="text" id="albumTitle" name="albumTitle" required></p>
+					<p>Singer: 					<input type="text" id="singer" name="singer" required></p>
+					<p>Album publication year: 	<input type="number" id="date" name="date" required></p>
+					<p>Album image: 			<input type="file" id="imageFile" name="albumImg" accept="image/*" required></p>
+					<p>MP3 file: 				<input type="file" id="songFile" name="songFile" accept="audio/*" required></p>
+					<p><input type="button" id="createSongButton" value="submit"></p>
+					<p class = "error" id="songError">
+				</form>
+			</fieldset>
+			<br><br>
+	
+			<table class="playlistTable" id="playlistTable">
+				<thead class="playlistTableHead" id="playlistTableHead">
+					<tr>
+						<th>PlayList name</th>
+						<th>Creation date</th>
+					</tr>
+				</thead>
+	
+				<tbody class="playlistTableBody" id="playlistTableBody">
+				</tbody>
+			</table>
+			<p class = "error" id="playlistTableError"></p>
+			
+			<br><br>
+			<fieldset class="createPlaylistField">
+				<form action="#">
+					Create a new playList<br>
+					<p>Title: <input type="text" id="name" name="name" required></p>
+					<p><input type="button" id="createPlaylistButton" value="submit"></p>
+					<p class = "error" id="createPlaylistError"></p>
+				</form>
+			</fieldset>
+		</div>
 
 		<div class="playlistPage">
 			<h2 id="playlistNameMessage"> PlayList: <span id="playlistName"></span></h2>

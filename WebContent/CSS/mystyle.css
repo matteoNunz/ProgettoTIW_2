@@ -2,11 +2,7 @@
 	color:red;
 }
 
-/*.songsTable {
-	margin-left: auto;
-  	margin-right: auto;
-}*/
-
+/*
 .before {
 	position: relative;
 	left: -170px;
@@ -16,6 +12,7 @@
 	position: relative;
 	left: 350px;
 }
+*/
 
 fieldset{
 	margin-right: 60px;
@@ -46,6 +43,12 @@ body {
 	text-align: center;
 }
 
+/* Just for now */
+h2 {
+	text-align: center;
+}
+
+/*
 .playlistTable {
 	position: relative;
 	margin: 0% 50% 0% 20% ;
@@ -60,6 +63,7 @@ body {
 	position: fixed;
 	margin: 0% -50% 0% 50% ;
 }
+*/
 
 .logout {
 	/*
@@ -69,6 +73,14 @@ body {
 	margin-left: 90%; */
 	text-align: right;
 	margin-right: 10%;
+}
+
+.homePage {
+	text-align: left;
+}
+
+.playlistPage {
+	text-align: right;
 }
 
 

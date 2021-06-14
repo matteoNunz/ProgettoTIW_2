@@ -296,19 +296,23 @@
                         	//console.log("Response 3: " + x.responseText);
 
                             //Convert the array buffer in bytes
-                            let bytes = new Uint8Array(x);
+                            let bytes = new Uint8Array(x.response);
+                            //alert(bytes);
 
                             //Convert the numeric byte array to a string
                             let string = String.fromCharCode.apply(null , bytes);
+                            //alert(string);
 
                             //Convert the string to a base64 string
                             let base64 = btoa(string);
+                            //alert(base64);
 
                             //TODO it can be jpeg too -> if it works return the base64 directly from the servlet
                             //Add the header to the base64 string
-                            let dataUrl = "data:img/png;base64," + base64;
+                            let dataUrl = "data:image/jpeg;base64," + base64;
+                            //alert(dataUrl);
 
-                            image.src =dataUrl;
+                            image.src = dataUrl;
                             //image.src = x.response;
                         }
                     } , true
