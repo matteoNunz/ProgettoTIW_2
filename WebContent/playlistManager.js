@@ -139,8 +139,7 @@
             });
             //Show the table
             this.listcontainer.style.visibility = "visible";
-            
-            console.log("The number of anchor in this body is: " + this.listBodyContainer.querySelectorAll("a").length);
+     
         }
 
         this.autoClick = function(playlistId) {
@@ -150,9 +149,7 @@
             let anchorToClick = (playlistId) ?
                 document.querySelector(selector) :
                 self.listBodyContainer.querySelectorAll("a")[0];           
-
-            console.log("The number of anchor in this body is: " + this.listBodyContainer.querySelectorAll("a").length);
-            console.log("AutoClick select playlist with id: " + this.listBodyContainer.querySelectorAll("a")[0]);    
+   
             console.log("AutoClick select playlist with id: " + anchorToClick.getAttribute("playlistId"));
 
             if(anchorToClick){
@@ -188,7 +185,7 @@
                         switch(request.status){
                             case 200:
                                 let songs = JSON.parse(request.responseText);
-                                console.log("Number of songs in the playList is: " + songs.length);
+        
                                 if(songs.length == 0){
                                     self.alertContainer.textContent = "No songs yet";
                                     return;
@@ -218,31 +215,50 @@
             let self = this;
             //Empty the body of the table
             this.listBodyContainer.innerHTML = "";
+            
+            console.log("Number of songs in the playList is: " + songs.length);
 
             let next = false;
 
             //Check section and set next
-            if (section < 0) {
+            if (section < 0 || !section) {
                 section = 0;
             }
-            if (section * 5 + 5 > songs.size()) {
-                section = (songs.size() / 5);
+            if (section * 5 + 5 > songs.length) {
+                section = (songs.length / 5);
+                //Save just the number before the point
+                section = parseInt(section.toString().split("."))[0];
             }
-            if ((section * 5 + 5) < songs.size()) {
+            if ((section * 5 + 5) < songs.length) {
                 next = true;
             }
 
             let songsToShow;
 
-            if (songs.size() >= section * 5 + 5)
-                songsToShow = songs.slice(section * 5, section * 5 + 5); // [)
-            else
-                songsToShow = songs.slice(section * 5, songs.size()); // [)
+            if (songs.length >= section * 5 + 5){
+            	console.log("Case (songs.length >= section * 5 + 5)");
+            	songsToShow = songs.slice(section * 5, section * 5 + 5); // [)
+            }   
+               
+            else{
+            	console.log("Case !(songs.length >= section * 5 + 5)");
+            	console.log("Section is " + section);
+            	console.log("Songs length is " + songs.length);
+            	console.log(songs.slice(section * 5, songs.length));
+            	songsToShow = songs.slice(section * 5, songs.length); // [)
+            }
+                
+                
+            console.log("SongsToShow has " + songsToShow.length + " elements");
 
             //Create the main row of the external table
+            
+            console.log("Creating the song table");
+            
             row = document.createElement("tr");
 
             songsToShow.forEach( function (songToShow){
+            	console.log("Creating a cell of the song table");
                 internalTableCell = document.createElement("td");
                 internalTable = document.createElement("table");
 
@@ -252,6 +268,9 @@
                 imageRow = document.createElement("tr");
                 //Row for the song title
                 songNameRow = document.createElement("tr");
+                
+                internalTable.appendChild(imageRow);
+                internalTable.appendChild(songNameRow);
 
                 imageCell = document.createElement("td");
                 songNameCell = document.createElement("td");
@@ -259,15 +278,23 @@
                 imageRow.appendChild(imageCell);
                 songNameRow.appendChild(songNameCell);
 
-                image = document.createElement("src");
+                image = document.createElement("img");
                 imageCell.appendChild(image);
                 //TODO how add the image?? With an attribute?
 
                 let src = image.src;
-                makeCall("GET" , "GetImage?" + song.fileName , null ,
+                
+                console.log("Calling GetImage/" + songToShow.fileName);
+                
+                makeCall("GET" , "GetImage/" + songToShow.fileName , null ,
                     function(x) {
+                    	console.log("CallBack function for images called");
                         if(x.readyState == XMLHttpRequest.DONE){
-                            src = x.response;
+                        	console.log("Setting the image in src");
+                        	console.log("Response 1: " + x);
+                        	//console.log("Response 2: " + x.response);
+                        	console.log("Response 3: " + x.responseText);
+                            image.src = x.response;
                         }
                     }
                 );

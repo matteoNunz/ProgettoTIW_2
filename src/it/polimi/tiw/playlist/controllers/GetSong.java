@@ -46,8 +46,17 @@ public class GetSong extends HttpServlet{
 		HttpSession s = request.getSession();
 		User user = (User) s.getAttribute("user");
 		
+		//Check if the path info is valid
+		if (pathInfo == null || pathInfo.equals("/")) {
+			//Set an error and return nothing
+			return;
+		}
+		
 		//Take the fileName from the pathInfo without the "/" character
 		String filename = URLDecoder.decode(pathInfo.substring(1), "UTF-8");
+		
+		System.out.println("GetSong called, name of the song: " + filename);
+		
 
 		SongDAO sDao = new SongDAO(connection);
 		
@@ -68,6 +77,7 @@ public class GetSong extends HttpServlet{
 			return;
 		}
 		
+		response.setStatus(HttpServletResponse.SC_OK);//Code 200
 		
 		//Set headers for browser
 		response.setHeader("Content-Type", getServletContext().getMimeType(filename));

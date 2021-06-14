@@ -55,6 +55,8 @@ public class GetImage extends HttpServlet{
 		//Take the fileName from the pathInfo without the "/" character
 		String filename = URLDecoder.decode(pathInfo.substring(1), "UTF-8");
 		
+		System.out.println("GetImage called, name of the song: " + filename);
+		
 		SongDAO sDao = new SongDAO(connection);
 		
 		try {
@@ -73,6 +75,8 @@ public class GetImage extends HttpServlet{
 			//Set an error
 			return;
 		}
+		
+		response.setStatus(HttpServletResponse.SC_OK);//Code 200
 		
 		//Set headers for browser
 		response.setHeader("Content-Type", getServletContext().getMimeType(filename));
