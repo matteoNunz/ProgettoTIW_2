@@ -82,6 +82,9 @@ public class GetPlaylistList extends HttpServlet {
 		Gson gSon = new GsonBuilder().setDateFormat("dd-MM-yyyy").create();
 		String jSon = gSon.toJson(playlists);
 		
+		System.out.println("Printing the jSon with all the playlist");
+		System.out.println(jSon.toString());
+		
 		response.setContentType("application/json");
 		response.setCharacterEncoding("UTF-8");
 		response.getWriter().write(jSon);

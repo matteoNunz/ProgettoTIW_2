@@ -58,6 +58,7 @@
 
         this.reset = function() {
             this.listcontainer.style.visibility = "hidden";
+            this.alertContainer.textContent = "";
         }
 
         this.show = function(next) {
@@ -66,6 +67,7 @@
             //Ask the playList table to the server
             makeCall("GET" , "GetPlaylistList" , null ,
                 function(request) {
+                	self.alertContainer.textContent = "";
                     if(request.readyState == XMLHttpRequest.DONE){
                         switch(request.status){
                             case 200:
@@ -74,6 +76,7 @@
                                     self.alertContainer.textContent = "No playlist yet";
                                     return;
                                 }
+                                self.alertContainer.textContent = "";
                                 self.update(playlistsToShow);
                                 //Simulate a click with autoClick function
                                 if(next){
@@ -88,6 +91,7 @@
                                 break;
 
                             default:
+                            	alert("Default");
                                 self.alertContainer.textContent = request.responseText;
                         }
                     }
@@ -129,7 +133,7 @@
                 anchor.setAttribute("playlistId" , playlist.id);
                 console.log("Initializing row with playlistId " + playlist.id);
                 anchor.addEventListener("click" , (e) => {
-                    songsInPLayList.show(anchor.getAttribute("playlistId"));
+                    songsInPLayList.show(e.target.getAttribute("playlistId"));
                 });
                 //Disable the href of the anchor
                 anchor.href = "#";
@@ -173,6 +177,7 @@
 
         this.reset = function() {
             this.listContainer.style.visibility = "hidden";
+            this.alertContainer.textContent = "";
         }
 
         this.show = function(playlistId) {
@@ -182,6 +187,7 @@
             makeCall("GET" , "GoToPlayListPage?playlistId=" + playlistId , null ,
                 function(request) {
                     if(request.readyState == XMLHttpRequest.DONE){
+                    	self.alertContainer.textContent = "";
                         switch(request.status){
                             case 200:
                                 let songs = JSON.parse(request.responseText);
@@ -282,7 +288,8 @@
                 imageCell.appendChild(image);
                 //TODO how add the image?? With an attribute?
 
-                let src = image.src;
+                //image.src = songToShow.fileName;
+                
                 
                 console.log("Calling GetImage/" + songToShow.fileName);
                 
@@ -317,6 +324,7 @@
                         }
                     } , true
                 );
+                
 
                 anchor = document.createElement("a");
                 songNameCell.appendChild(anchor);

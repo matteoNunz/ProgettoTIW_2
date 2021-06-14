@@ -1,10 +1,12 @@
 package it.polimi.tiw.playlist.controllers;
 
+import java.io.File;
 import java.io.IOException;
-
+import java.nio.file.Files;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Base64;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -32,9 +34,11 @@ public class GoToPlaylistPage extends HttpServlet{
 	
 	private static final long serialVersionUID = 1L;
 	private Connection connection;
+	private String folderPath = "";
 
 	public void init() {
 		ServletContext context = getServletContext();
+		folderPath = getServletContext().getInitParameter("albumImgPath");
 		
 		try {
 			connection = ConnectionHandler.getConnection(context);
@@ -118,6 +122,10 @@ public class GoToPlaylistPage extends HttpServlet{
 		try {
 			
 			ArrayList<SongDetails> songsInPlaylist = sDao.getSongTitleAndImg(id);
+			
+			int numberOfSongs = songsInPlaylist.size();
+			
+			System.out.println("Number of songs is " +  numberOfSongs);
 			//Send this with an other servlet
 			//ArrayList<SongDetails> songsNotInPlaylist = sDao.getSongsNotInPlaylist(id , user.getId());
 			//String title = pDao.findPlayListTitleById(id);
@@ -149,16 +157,24 @@ public class GoToPlaylistPage extends HttpServlet{
 			
 			//Send all the song of the playList
 			JSONArray jArray = new JSONArray();
-			JSONObject jSonObject = new JSONObject();
+			JSONObject jSonObject;
 			
 			
 			for(SongDetails song : songsInPlaylist) {
+				System.out.println("Title: " + song.getSongTitle());
+				
+				//Here to reset the attribute for each song
+				jSonObject = new JSONObject();
+				
 				jSonObject.put("songId", song.getId());
 				jSonObject.put("songTitle" , song.getSongTitle());
 				jSonObject.put("fileName" , song.getImgFile());
 				
 				jArray.put(jSonObject);
 			}
+			
+			System.out.println("Prining jArray: ");
+			System.out.println(jArray.toString());
 			
 			response.setStatus(HttpServletResponse.SC_OK);//Code 200
 			response.setContentType("application/json");
