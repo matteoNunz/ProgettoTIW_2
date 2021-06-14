@@ -20,7 +20,7 @@ function makeCall(method, url, formElement, callBack, isRequestingFile , reset =
     request.open(method, url);
 
     if(isRequestingFile)
-        request.responseType = "document";
+        request.responseType = "arraybuffer";
 
     if (formElement == null) {
         request.send();

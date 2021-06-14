@@ -291,12 +291,27 @@
                     	console.log("CallBack function for images called");
                         if(x.readyState == XMLHttpRequest.DONE){
                         	console.log("Setting the image in src");
-                        	console.log("Response 1: " + x);
+                        	//console.log("Response 1: " + x);
                         	//console.log("Response 2: " + x.response);
-                        	console.log("Response 3: " + x.responseText);
-                            image.src = x.response;
+                        	//console.log("Response 3: " + x.responseText);
+
+                            //Convert the array buffer in bytes
+                            let bytes = new Uint8Array(x);
+
+                            //Convert the numeric byte array to a string
+                            let string = String.fromCharCode.apply(null , bytes);
+
+                            //Convert the string to a base64 string
+                            let base64 = btoa(string);
+
+                            //TODO it can be jpeg too -> if it works return the base64 directly from the servlet
+                            //Add the header to the base64 string
+                            let dataUrl = "data:img/png;base64," + base64;
+
+                            image.src =dataUrl;
+                            //image.src = x.response;
                         }
-                    }
+                    } , true
                 );
 
                 anchor = document.createElement("a");
