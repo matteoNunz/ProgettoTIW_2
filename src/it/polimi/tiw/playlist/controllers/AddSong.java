@@ -2,18 +2,18 @@ package it.polimi.tiw.playlist.controllers;
 
 import java.io.IOException;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 
-import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.UnavailableException;
+import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
+import org.apache.commons.lang.StringEscapeUtils;
 
 import it.polimi.tiw.playlist.beans.User;
 import it.polimi.tiw.playlist.dao.PlaylistDAO;
@@ -21,6 +21,7 @@ import it.polimi.tiw.playlist.dao.SongDAO;
 import it.polimi.tiw.playlist.utils.ConnectionHandler;
 
 @WebServlet("/AddSong")
+@MultipartConfig
 public class AddSong extends HttpServlet{
 	
 	private static final long serialVersionUID = 1L;
@@ -36,8 +37,8 @@ public class AddSong extends HttpServlet{
 	}
 	
 	public void doPost(HttpServletRequest request , HttpServletResponse response)throws ServletException,IOException{
-		String playlistId = request.getParameter("playlistId");
-		String songId = request.getParameter("song");
+		String playlistId = StringEscapeUtils.escapeJava(request.getParameter("playlistId"));
+		String songId = StringEscapeUtils.escapeJava(request.getParameter("addSongToPlayList"));
 		String error = "";
 		int pId = -1;
 		int sId = -1;
@@ -79,11 +80,9 @@ public class AddSong extends HttpServlet{
 		
 		//if an error occurred
 		if(!error.equals("")) {
-			request.setAttribute("error", error);
-			String path = getServletContext().getContextPath() + "/GoToPlayListPage?playlistId=" + playlistId + "&section=0";
-
-			RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(path);
-			dispatcher.forward(request,response);
+			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);//Code 400
+			response.getWriter().println(error);
+			return;
 		}
 		
 		//The user can add the song at the playList
@@ -95,22 +94,16 @@ public class AddSong extends HttpServlet{
 			boolean result = pDao.addSong(pId, sId);
 			
 			if(result == true) {
-				String path = getServletContext().getContextPath() + ("/GoToPlayListPage?playlistId=" + playlistId + "&section=0");
-				response.sendRedirect(path);
+				response.setStatus(HttpServletResponse.SC_OK);//Code 200
 			}
 			else {
-				error += "An arror occurred with the db, retry later;";
-				request.setAttribute("error", error);
-				//Forward to GoToPlaylistPage
-				String path = getServletContext().getContextPath() + "/GoToPlayListPage?playlistId=" + playlistId + "&section=0";
-				RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(path);
-				dispatcher.forward(request,response);
+				response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);//Code 500
+				response.getWriter().println("An arror occurred with the db, retry later;");
 			}
 		}catch(SQLException e) {
-			e.printStackTrace();
-			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "An arror occurred with the db, retry later");
+			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);//Code 500
+			response.getWriter().println("An arror occurred with the db, retry later;");
 		}
-		
 	}
 
 	public void destroy() {

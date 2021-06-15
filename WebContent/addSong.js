@@ -7,7 +7,7 @@
  */
 
 (function(){
-    document.getElementById("idSongButton").addEventListener("click" , (e) => {
+    document.getElementById("addSongButton").addEventListener("click" , (e) => {
 
         console.log("Adding a song to the playlist");
 
