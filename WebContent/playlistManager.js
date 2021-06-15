@@ -3,6 +3,7 @@
     var playlistList;
     var songsInPLayList;
     var songsNotInPlayList;
+    var songDetails;
     let personalMessage;
     let pageOrchestrator = new PageOrchestrator();
 
@@ -201,6 +202,9 @@
                                     return;
                                 }
                                 self.update(songs , 0);
+
+                                //Launch the autoClick to select a song to show
+                                self.autoClick();
                                 break;
 
                             case 403:
@@ -334,17 +338,40 @@
                 anchor.setAttribute("songId" , songToShow.songId);
                 anchor.href = "#";
                 anchor.addEventListener("click" , (e) => {
-                   //TODO
-                   //songDetails.show(e.target.getAttribute("songId"));
+                   songDetails.show(e.target.getAttribute("songId") , songsInPLayList.playlistId);
                 });
 
                 row.appendChild(internalTableCell);
             });
             self.listBodyContainer.appendChild(row);
         }
+
+        this.autoClick = function(songId) {
+            let e = new Event("click");
+            let selector = "a[songId=" + songId + "']";
+            //Take the first element or the specified playlist
+            let anchorToClick = (songId) ?
+                document.querySelector(selector) :
+                self.listBodyContainer.querySelectorAll("a")[0];
+
+            console.log("AutoClick select song with id: " + anchorToClick.getAttribute("songId"));
+
+            if(anchorToClick){
+                anchorToClick.dispatchEvent(e);
+            }else{
+                //Show nothing if the playList has no song
+                songDetails.reset();
+            }
+        }
     }
 
-    function SongsNotInPLaylist(alertContainer , listContainer , select){
+    /**
+     * Function that shows songs not in the playList specified by playlistId
+     * @param alertContainer is the container where set the error
+     * @param listContainer is the container of the form
+     * @param select is the select inside the form to be fulled
+     */
+    function SongsNotInPlaylist(alertContainer , listContainer , select){
         this.alertContainer = alertContainer;
         this.listContainer = listContainer;
         this.select = select;
@@ -409,6 +436,119 @@
         }
     }
 
+    function SongDetails(alertContainer , listContainer , listBodyContainer){
+        this.alertContainer = alertContainer;
+        this.listContainer = listContainer;
+        this.listBodyContainer = listBodyContainer;
+        this.songId = null;
+        this.playlistId = null;
+
+        this.reset = function() {
+            this.listContainer.style.visibility = "hidden";
+        }
+
+        this.show = function(songId , playlistId) {
+            this.songId = songId;
+            this.playlistId = playlistId;
+
+            let self = this;
+
+            makeCall("GET" , "GetSongDetails?songId=" + this.songId + "&playlistId=" + this.playlistId , null ,
+                function(request) {
+                    if(request.readyState == XMLHttpRequest.DONE){
+                        switch(request.status){
+                            case 200:
+                                let songDetails = JSON.parse(request.responseText);
+                                self.update(songDetails);
+                                break;
+
+                            case 403:
+                                //Redirect to login.html and remove the username from the session
+                                window.location.href = request.getResponseHeader("Location");
+                                window.sessionStorage.removeItem("userName");
+                                break;
+
+                            default:
+                                self.alertContainer.textContent = request.responseText;
+                                break;
+                        }
+                    }
+                }
+            );
+        }
+
+        this.update = function(songDetails) {
+            let row , titleCell , singerCell , albumTitleCell , publicationYearCell , genreCell , playCell;
+
+            this.listBodyContainer.innerHTML = "";
+
+            row = document.createElement("tr");
+
+            //TODO do it as follow -> but it's not good for the audio control tag
+            /*
+            let row , cell;
+            songDetails.forEach(function(item){
+                cell = document.createElement("td");
+                cell.appendChild(document.createTextNode(item));
+                row.appendChild(cell);
+            });
+             */
+
+            titleCell = document.createElement("td");
+            titleCell.appendChild(document.createTextNode(songDetails.songTitle));
+            row.appendChild(titleCell);
+
+            singerCell = document.createElement("td");
+            singerCell.appendChild(document.createTextNode(songDetails.singer));
+            row.appendChild(singerCell);
+
+            albumTitleCell = document.createElement("td");
+            albumTitleCell.appendChild(document.createTextNode(songDetails.albumTitle));
+            row.appendChild(albumTitleCell);
+
+            publicationYearCell = document.createElement("td");
+            publicationYearCell.appendChild(document.createTextNode(songDetails.publicationYear));
+            row.appendChild(publicationYearCell);
+
+            genreCell = document.createElement("td");
+            genreCell.appendChild(document.createTextNode(songDetails.kindOf));
+            row.appendChild(genreCell);
+
+            playCell = document.createElement("audio");
+            playCell.setAttribute("type" , "audio/mpeg");
+            row.appendChild(playCell);
+
+            makeCall("GET" , "GetSong/" + songDetails.songFile , null ,
+                function(x) {
+                    console.log("CallBack function for images called");
+                    if(x.readyState == XMLHttpRequest.DONE){
+                        console.log("Setting the audio in src");
+
+                        //Convert the array buffer in bytes
+                        let bytes = new Uint8Array(x.response);
+                        //alert(bytes);
+
+                        //Convert the numeric byte array to a string
+                        let string = String.fromCharCode.apply(null , bytes);
+                        //alert(string);
+
+                        //Convert the string to a base64 string
+                        let base64 = btoa(string);
+                        //alert(base64);
+
+                        //Add the header to the base64 string
+                        let dataUrl = "data:audio/mpeg;base64," + base64;
+                        //alert(dataUrl);
+
+                        playCell.src = dataUrl;
+                    }
+                } , true
+            );
+
+            this.listBodyContainer.appendChild(row);
+        }
+    }
+
     /**
      * It's the main controller of the application
      * @constructor
@@ -432,8 +572,12 @@
                                             document.getElementById("songTableBody"));
 
             //Initialize songs not in the playlist
-            songsNotInPlayList = new SongsNotInPLaylist(document.getElementById("addSongMessage") ,
+            songsNotInPlayList = new SongsNotInPlaylist(document.getElementById("addSongMessage") ,
                 document.getElementById("addSongToPlaylist") , document.getElementById("addSongToPlayList"));
+
+            //Initialize the songDetails
+            songDetails = new SongDetails(document.getElementById("songDetailsMessage") ,
+                                        document.getElementById("songPage") , document.getElementById("songDetailsTableBody"));
 
         	//Just for verify
         	//playlistList.show();
@@ -450,6 +594,7 @@
             playlistTableError.textContent = "";
             songInPlaylistError.textContent = "";
             document.getElementById("addSongMessage").textContent = "";
+            document.getElementById("songDetailsMessage").textContent = "";
 
             //Show the playlists and show the song of a playlist(the first one or the one specified by the id)
             //That implies the invocation of songsNotInPlaylist.show(playlistId)
