@@ -344,10 +344,10 @@
         }
     }
 
-    function SongsNotInPLaylist(alertContainer , listContainer , form){
+    function SongsNotInPLaylist(alertContainer , listContainer , select){
         this.alertContainer = alertContainer;
         this.listContainer = listContainer;
-        this.listBodyContainer = form;
+        this.select = select;
         this.playlistId = null;
 
         this.reset = function() {
@@ -390,20 +390,20 @@
         }
 
         this.update = function(songsToShow) {
+
+            let option;
+
+            this.select.innerHTML = "";
+            
             let self = this;
-
-            let option , select;
-
-            this.listBodyContainer.innerHTML = "";
-
-            select = form.closest("select");
 
             //Add an option for each song
             songsToShow.forEach(function(songToShow) {
                 option = document.createElement("option");
-                option.value = songToShow.id;
-                option.text = songToShow.songTitle;
-                select.appendChild(option);
+                option.setAttribute("value" , songToShow.id);
+                option.appendChild(document.createTextNode(songToShow.songTitle));
+                console.log("Option is " + option);
+                self.select.appendChild(option);
             });
 
         }
@@ -433,7 +433,7 @@
 
             //Initialize songs not in the playlist
             songsNotInPlayList = new SongsNotInPLaylist(document.getElementById("addSongMessage") ,
-                document.getElementById("addSongToPlaylist") , document.getElementById("addSongToPLayListForm"));
+                document.getElementById("addSongToPlaylist") , document.getElementById("addSongToPlayList"));
 
         	//Just for verify
         	//playlistList.show();

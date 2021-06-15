@@ -30,7 +30,7 @@ import it.polimi.tiw.playlist.utils.ConnectionHandler;
 
 @WebServlet("/GetSongsInPlaylist")
 @MultipartConfig
-public class GoToPlaylistPage extends HttpServlet{
+public class GetSongsInPLaylist extends HttpServlet{
 	
 	private static final long serialVersionUID = 1L;
 	private Connection connection;
@@ -97,7 +97,7 @@ public class GoToPlaylistPage extends HttpServlet{
 		
 		if(!error.equals("")){
 			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);//Code 400
-			response.getWriter().println("Bad request");
+			response.getWriter().println(error);
 			return;
 		}
 		

@@ -55,9 +55,9 @@ public class CreateSong extends HttpServlet{
 	
 	public void doPost(HttpServletRequest request , HttpServletResponse response)throws ServletException,IOException{
 		//Take the request parameters
-		String songTitle = StringEscapeUtils.escapeJava("title");
-		String albumTitle = StringEscapeUtils.escapeJava("albumTitle");
-		String singer = StringEscapeUtils.escapeJava("singer");
+		String songTitle = StringEscapeUtils.escapeJava(request.getParameter("title"));
+		String albumTitle = StringEscapeUtils.escapeJava(request.getParameter("albumTitle"));
+		String singer = StringEscapeUtils.escapeJava(request.getParameter("singer"));
 		
 		String genre = request.getParameter("genre");
 		String date = request.getParameter("date");
