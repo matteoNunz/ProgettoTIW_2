@@ -2,47 +2,38 @@ package it.polimi.tiw.playlist.controllers;
 
 import java.io.IOException;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.UnavailableException;
+import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.thymeleaf.TemplateEngine;
-import org.thymeleaf.context.WebContext;
-import org.thymeleaf.templatemode.TemplateMode;
-import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
+import org.apache.commons.lang.StringEscapeUtils;
 
-import it.polimi.tiw.playlist.beans.Playlist;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 import it.polimi.tiw.playlist.beans.SongDetails;
 import it.polimi.tiw.playlist.beans.User;
 import it.polimi.tiw.playlist.dao.PlaylistDAO;
 import it.polimi.tiw.playlist.dao.SongDAO;
 import it.polimi.tiw.playlist.utils.ConnectionHandler;
 
-@WebServlet("/GoToSongPage")
-public class GoToSongPage extends HttpServlet{
+@WebServlet("/GetSongDetails")
+@MultipartConfig
+public class GetSongDetails extends HttpServlet{
 
 	private static final long serialVersionUID = 1L;
 	private Connection connection;
-	private TemplateEngine templateEngine;
 	
 	public void init() {
 		ServletContext context = getServletContext();
-		
-		//Initializing the template engine
-		ServletContextTemplateResolver templateResolver = new ServletContextTemplateResolver(context);
-		templateResolver.setTemplateMode(TemplateMode.HTML);
-		this.templateEngine = new TemplateEngine();
-		this.templateEngine.setTemplateResolver(templateResolver);
-		templateResolver.setSuffix(".html");
 		
 		try {
 			connection = ConnectionHandler.getConnection(context);
@@ -53,13 +44,11 @@ public class GoToSongPage extends HttpServlet{
 	
 	public void doGet(HttpServletRequest request , HttpServletResponse response)throws ServletException,IOException{
 		//Take the song id
-		String songId = request.getParameter("songId");
-		String playlistId = request.getParameter("playlistId");
-		String section = request.getParameter("section");
+		String songId = StringEscapeUtils.escapeJava(request.getParameter("songId"));
+		String playlistId = StringEscapeUtils.escapeJava(request.getParameter("playlistId"));
 		String error = "";
 		int sId = -1;
 		int pId = -1;
-		int block = -1;
 		
 		HttpSession s = request.getSession();
 		//Take the user
@@ -83,10 +72,6 @@ public class GoToSongPage extends HttpServlet{
 				sId = Integer.parseInt(songId);
 				pId = Integer.parseInt(playlistId);
 				
-				//set block only if section is valid -> otherwise the next controller know what to do 
-				if(section != null && !section.isEmpty())
-					block = Integer.parseInt(section);
-				
 				//Check if the player has this song --> Check if the song exists
 				if(!sDao.findSongByUser(sId, user.getId())) {
 					error += "Song doesn't exist";
@@ -104,38 +89,35 @@ public class GoToSongPage extends HttpServlet{
 		
 		//if an error occurred
 		if(!error.equals("")){
-			request.setAttribute("error2", error);
-			String path = "/GoToPlayListPage";
-
-			RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(path);
-			dispatcher.forward(request,response);
+			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);//Code 400
+			response.getWriter().println(error);
 			return;
 		}
 		
 		//User can be here 
 		
-		//To take song and playList details 
+		//To take song details 
 		SongDAO sDao = new SongDAO(connection);//I can use the same sDao used before
-		PlaylistDAO pDao = new PlaylistDAO(connection);
 		
 		try {
 			SongDetails song = sDao.getSongDetails(sId);
-			Playlist playlist = new Playlist();
-			playlist.setId(pId);
-			playlist.setTitle(pDao.findPlayListTitleById(pId));
+
+			//Create the jSon with the answer
+			Gson gSon = new GsonBuilder().create();
+			String jSon = gSon.toJson(song);
 			
-			String path = "/WEB-INF/SongPage.html";
-			ServletContext servletContext = getServletContext();
-			final WebContext ctx = new WebContext(request , response , servletContext , request.getLocale());
-			ctx.setVariable("song", song);
-			ctx.setVariable("playlist", playlist);
-			//block is the block in the playList where there is the song
-			ctx.setVariable("block", block);
-			templateEngine.process(path , ctx , response.getWriter());
+			System.out.println("Printing the jSon with all the song not in the playlist");
+			System.out.println(jSon.toString());
+			
+			response.setStatus(HttpServletResponse.SC_OK);//Code 200
+			response.setContentType("application/json");
+			response.setCharacterEncoding("UTF-8");
+			response.getWriter().println(jSon);
 			
 		}catch(SQLException e) {
-			e.printStackTrace();
-			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "An arror occurred with the db, retry later");
+			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);//Code 500
+			response.getWriter().println("An arror occurred with the db, retry later");
+			return;
 		}
 	}
 	
