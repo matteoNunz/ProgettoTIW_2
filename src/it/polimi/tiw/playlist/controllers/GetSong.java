@@ -24,6 +24,7 @@ import it.polimi.tiw.playlist.utils.ConnectionHandler;
 
 @WebServlet("/GetSong/*")
 public class GetSong extends HttpServlet{
+	
 	private static final long serialVersionUID = 1L;
 	String folderPath = "";
 	private Connection connection;

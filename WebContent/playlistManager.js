@@ -350,9 +350,12 @@
             let e = new Event("click");
             let selector = "a[songId=" + songId + "']";
             //Take the first element or the specified playlist
+            
+            console.log("listBodyContainer is " + self.listBodyContainer);
+            
             let anchorToClick = (songId) ?
                 document.querySelector(selector) :
-                self.listBodyContainer.querySelectorAll("a")[0];
+                this.listBodyContainer.querySelectorAll("a")[0];
 
             console.log("AutoClick select song with id: " + anchorToClick.getAttribute("songId"));
 
