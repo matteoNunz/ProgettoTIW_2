@@ -4,8 +4,49 @@
     var songsInPLayList;
     var songsNotInPlayList;
     var songDetails;
+    var sortingList;
+    var playListSongsToOrder = new PlayListSongsToOrder();
     let personalMessage;
+    let playListMessage;
     let pageOrchestrator = new PageOrchestrator();
+
+    /**
+     * It contains all the song titles and ids of the current playlist needed for the sorting
+     * @constructor
+     */
+    function PlayListSongsToOrder(){
+        /**
+         * It's the id of the playlist
+         */
+        this.playlistId = null;
+        /**
+         * It's an array that contains song element. This attribute will be used to fill the table for the reorder
+         */
+        this.songs = null;
+
+        /**
+         * Function used to reset the attribute songs
+         */
+        this.reset = function() {
+            this.songs = null;
+        }
+
+        /**
+         * FUnction that add a song to the attribute
+         * @param song is the song to add
+         */
+        this.addSong = function(song) {
+            this.songs.add(song);
+        }
+    }
+
+    /**
+     * Function that represent a song to be sorted
+     */
+    function Song(id , title){
+        this.id = id;
+        this.title = title;
+    }
 
     window.addEventListener("load" , () => {
         if(sessionStorage.getItem("userName") == null){
@@ -35,12 +76,22 @@
      * @param playlistName is the name of the playlist
      * @param messageContainer id the tag where put the name of the playlist
      */
-    function PlaylistMessage(playlistName , messageContainer){
-        this.playlistName = playlistName;
+    function PlaylistMessage(messageContainer){
+        this.playlistName = null;
         this.messageContainer = messageContainer;
 
         this.show = function() {
             this.messageContainer.textContent = this.playlistName;
+            this.messageContainer.style.visibility = "visible";
+        }
+
+        this.setPlayListName = function(playlistName) {
+            this.playlistName = playlistName;
+            this.show();
+        }
+
+        this.reset = function() {
+            this.messageContainer.style.visibility = "hidden";
         }
     }
 
@@ -121,7 +172,6 @@
 
                 //Create the creation date cell
                 creationDateCell = document.createElement("td");
-                //TODO verify the follow
                 creationDateCell.textContent = playlist.creationDate;
                 //creationDateCell.appendData(playlist.creationDate);
                 row.appendChild(creationDateCell);
@@ -135,10 +185,18 @@
                 anchor.setAttribute("playlistId" , playlist.id);
                 console.log("Initializing row with playlistId " + playlist.id);
                 anchor.addEventListener("click" , (e) => {
+                    //Reset the playListSongsToOrder
+                    resetPlayListToOrder();
                     //Show songs in the playList selected
                     songsInPLayList.show(e.target.getAttribute("playlistId"));
                     //Show songs not in the playList selected
                     songsNotInPlayList.show(e.target.getAttribute("playlistId"));
+                    //Show the title
+                    //TODO to verify
+                    let targetRow = e.target.closest("tr");//Row of the event
+                    let targetTitles = targetRow.selectAllChildren(e.target.closest("td"));//Take all the td of this row
+                    let targetTitle = targetTitles[0];//Tale the first td -> the title
+                    playListMessage.setPlayListName(targetTitle);
                 });
                 //Disable the href of the anchor
                 anchor.href = "#";
@@ -229,6 +287,16 @@
             let self = this;
             //Empty the body of the table
             this.listBodyContainer.innerHTML = "";
+
+            //Set the playlistId
+            playListSongsToOrder.playlistId = this.playlistId;
+            //Save song titles and ids
+            songs.forEach( function(songToOrder) {
+                //Create a new song object
+                let song = new Song(songToOrder.songId , songToOrder.songTitle);
+                //Add it to playListSongsToOrder
+                playListSongsToOrder.addSong(song);
+            })
             
             console.log("Number of songs in the playList is: " + songs.length);
 
@@ -343,7 +411,8 @@
 
                 row.appendChild(internalTableCell);
             });
-            self.listBodyContainer.appendChild(row);
+            this.listBodyContainer.appendChild(row);
+            this.listContainer.style.visibility = "visible";
         }
 
         this.autoClick = function(songId) {
@@ -435,10 +504,16 @@
                 console.log("Option is " + option);
                 self.select.appendChild(option);
             });
-
+            this.listContainer.style.visibility = "visible";
         }
     }
 
+    /**
+     * Function that shows the details of a selected song
+     * @param alertContainer is the container of the error
+     * @param listContainer is the container of the table
+     * @param listBodyContainer is the body of the table where put the details
+     */
     function SongDetails(alertContainer , listContainer , listBodyContainer){
         this.alertContainer = alertContainer;
         this.listContainer = listContainer;
@@ -549,12 +624,51 @@
             );
 
             this.listBodyContainer.appendChild(row);
+            this.listContainer.style.visibility = "visible";
+        }
+    }
+
+    function SortingList(alertContainer , listContainer , listBodyContainer){
+        this.alertContainer = alertContainer;
+        this.listContainer = listContainer;
+        this.listBodyContainer = listBodyContainer;
+        this.playlistId = null;
+
+        this.setPlaylistId = function(playlistId) {
+            this.playlistId = playlistId;
+        }
+
+        this.reset = function() {
+            this.listContainer.style.visibility = "hidden";
+            alertContainer.textContent = "";
+        }
+
+        //Take the song from playListSongsToOrder and fill the table
+        this.show = function() {
+            //Define the components of the table
+            let row , dataCell , nameCell;
+            //Save this for the closure
+            let self = this;
+
+            playListSongsToOrder.songs.forEach( function(song) {
+
+                row = document.createElement("tr");
+                row.className = "draggable";
+                row.setAttribute("songId" , song.id);
+
+                dataCell = document.createElement("td");
+                nameCell = document.createTextNode(song.title);
+                dataCell.appendChild(nameCell);
+                row.appendChild(dataCell);
+
+            });
+            this.listContainer.style.visibility = "visible";
+            //call the other file
         }
     }
 
     /**
      * It's the main controller of the application
-     * @constructor
      */
     function PageOrchestrator() {
         //Maybe i'll use just 1 error, not 1 for each component
@@ -565,6 +679,8 @@
             //Set the personal message and show it. Question: why I don't have to save the container in the object as for the userName?
             personalMessage = new PersonalMessage(sessionStorage.getItem("userName") , document.getElementById("userName"));
             personalMessage.show();
+
+            playListMessage = new PlaylistMessage(document.getElementById("playlistNameMessage"));
 
             //Initialize the playlist table
             playlistList = new PlaylistList(playlistTableError , document.getElementById("playlistTable") ,
@@ -582,6 +698,9 @@
             songDetails = new SongDetails(document.getElementById("songDetailsMessage") ,
                                         document.getElementById("songPage") , document.getElementById("songDetailsTableBody"));
 
+            //Initialize the sortingList
+            sortingList = new SortingList(document.getElementById("sortingError") ,
+                                        document.getElementById("sortPlayListTable") , document.getElementById("sortPLayListBody"));
         	//Just for verify
         	//playlistList.show();
         	//songInPLayList.show();
