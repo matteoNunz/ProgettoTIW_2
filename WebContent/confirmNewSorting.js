@@ -17,7 +17,7 @@
 
         //TODO add a control in case of length 0 or 1
 
-        makeCall("POST" , "AddSorting?playlistId=" + playListSongsToOrder.playlistId , null , sortingToSend ,
+        makeCall("POST" , "AddSorting?playlistId=" + playListSongsToOrder.playlistId , null ,
             function(request) {
                 console.log("CallBack function called");
 
@@ -42,7 +42,7 @@
                             break;
                     }
                 }
-            }
+            } , sortingToSend
         );
     });
 })();

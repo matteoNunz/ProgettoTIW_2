@@ -22,13 +22,13 @@
         /**
          * It's an array that contains song element. This attribute will be used to fill the table for the reorder
          */
-        this.songs = null;
+        this.songs = new Array();
 
         /**
          * Function used to reset the attribute songs
          */
         this.reset = function() {
-            this.songs = null;
+            this.songs = [];
         }
 
         /**
@@ -36,7 +36,7 @@
          * @param song is the song to add
          */
         this.addSong = function(song) {
-            this.songs.add(song);
+            this.songs.push(song);
         }
     }
 
@@ -186,7 +186,7 @@
                 console.log("Initializing row with playlistId " + playlist.id);
                 anchor.addEventListener("click" , (e) => {
                     //Reset the playListSongsToOrder
-                    resetPlayListToOrder();
+                    playListSongsToOrder.reset();
                     //Show songs in the playList selected
                     songsInPLayList.show(e.target.getAttribute("playlistId"));
                     //Show songs not in the playList selected
@@ -194,7 +194,9 @@
                     //Show the title
                     //TODO to verify
                     let targetRow = e.target.closest("tr");//Row of the event
-                    let targetTitles = targetRow.selectAllChildren(e.target.closest("td"));//Take all the td of this row
+                    //let targetTitles = targetRow.selectAllChildren("td");//Take all the td in this row
+                    //let targetTitles = targetRow.childNodes;
+                    let targetTitles = targetRow.getElementsByTagName("td")
                     let targetTitle = targetTitles[0];//Tale the first td -> the title
                     playListMessage.setPlayListName(targetTitle);
                 });
@@ -396,7 +398,7 @@
                             image.src = dataUrl;
                             //image.src = x.response;
                         }
-                    } , true
+                    } , null , true
                 );
 
                 anchor = document.createElement("a");
@@ -620,7 +622,7 @@
 
                         playCell.src = dataUrl;
                     }
-                } , true
+                } , null , true
             );
 
             this.listBodyContainer.appendChild(row);
@@ -692,7 +694,7 @@
 
             //Initialize songs not in the playlist
             songsNotInPlayList = new SongsNotInPlaylist(document.getElementById("addSongMessage") ,
-                document.getElementById("addSongToPlaylist") , document.getElementById("addSongToPlayList"));
+                document.getElementById("addSongToPlaylistDiv") , document.getElementById("addSongToPlayList"));
 
             //Initialize the songDetails
             songDetails = new SongDetails(document.getElementById("songDetailsMessage") ,
