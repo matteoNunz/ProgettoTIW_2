@@ -9,12 +9,12 @@
         /**
          * To save the dragged element reference
          */
-        this.startElement = null;
+        let startElement = null;
 
         /**
          * Add d&d event to all the row with class "draggable"
          */
-        function addEventListeners() {
+        this.addEventListeners = function() {
             let elements = document.getElementsByClassName("draggable");
 
             for(let i = 0 ; i < elements.length ; i++){
@@ -43,7 +43,9 @@
          */
         function dragStart(event) {
             //Save the element
-            this.startElement = event.target.closest("tr");
+            startElement = event.target.closest("tr");
+            console.log("Start element selected and it is " + startElement);
+            console.log("The start song id is: " + startElement.getAttribute("songId"));
         }
 
         /**
@@ -88,14 +90,17 @@
             let table = dest.closest('table');
             let rows = Array.from(table.querySelectorAll('tbody > tr'));
             let indexDest = rows.indexOf(dest);
+            
+            console.log("StartElement is: " + startElement);
+            console.log("The start song id is: " + startElement.getAttribute("songId"));
 
             //Move the dragged element to the new position
-            if (rows.indexOf(this.startElement) < indexDest)
+            if (rows.indexOf(startElement) < indexDest)
                 //If we're moving down, then we insert the element after our reference (indexDest)
-                this.startElement.parentElement.insertBefore(this.startElement, rows[indexDest + 1]);
+                startElement.parentElement.insertBefore(startElement, rows[indexDest + 1]);
             else
                 //If we're moving up, then we insert the element before our reference (indexDest)
-                this.startElement.parentElement.insertBefore(this.startElement, rows[indexDest]);
+                startElement.parentElement.insertBefore(startElement, rows[indexDest]);
 
             //Mark all rows in "not selected" class to reset previous dragOver
             unselectRows(rows);

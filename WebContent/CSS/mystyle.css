@@ -4,6 +4,14 @@
 	text-align: center;
 }
 
+.selected{
+	color: red;
+}
+
+.notSelected{
+	color: black;
+}
+
 /*
 .before {
 	position: relative;

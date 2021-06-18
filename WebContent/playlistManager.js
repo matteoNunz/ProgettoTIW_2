@@ -36,6 +36,7 @@
          * @param song is the song to add
          */
         this.addSong = function(song) {
+        	console.log("Adding a song to playListSongsToOrder");
             this.songs.push(song);
         }
     }
@@ -300,7 +301,11 @@
                 playListSongsToOrder.addSong(song);
             })
             
-            console.log("Number of songs in the playList is: " + songs.length);
+                        
+            //TODO now here, in future there will be a button to do that
+            sortingList.show();
+            //console.log("CALLED THE SHOW METHOD OF SORTING_LIST");
+            //console.log("Number of songs in the playListToOrder is: " + playListSongsToOrder.songs.length);
 
             let next = false;
 
@@ -336,9 +341,7 @@
             console.log("SongsToShow has " + songsToShow.length + " elements");
 
             //Create the main row of the external table
-            
-            console.log("Creating the song table");
-            
+
             row = document.createElement("tr");
 
             songsToShow.forEach( function (songToShow){
@@ -370,14 +373,11 @@
                 //image.src = songToShow.fileName;
 
                 
-                console.log("Calling GetImage/" + songToShow.fileName);
+                //console.log("Calling GetImage/" + songToShow.fileName);
                 
                 makeCall("GET" , "GetImage/" + songToShow.fileName , null ,
                     function(x) {
-                    	console.log("CallBack function for images called");
                         if(x.readyState == XMLHttpRequest.DONE){
-                        	console.log("Setting the image in src");
-
                             //Convert the array buffer in bytes
                             let bytes = new Uint8Array(x.response);
                             //alert(bytes);
@@ -421,9 +421,7 @@
             let e = new Event("click");
             let selector = "a[songId=" + songId + "']";
             //Take the first element or the specified playlist
-            
-            console.log("listBodyContainer is " + self.listBodyContainer);
-            
+
             let anchorToClick = (songId) ?
                 document.querySelector(selector) :
                 this.listBodyContainer.querySelectorAll("a")[0];
@@ -503,7 +501,6 @@
                 option = document.createElement("option");
                 option.setAttribute("value" , songToShow.id);
                 option.appendChild(document.createTextNode(songToShow.songTitle));
-                console.log("Option is " + option);
                 self.select.appendChild(option);
             });
             this.listContainer.style.visibility = "visible";
@@ -600,9 +597,9 @@
 
             makeCall("GET" , "GetSong/" + songDetails.songFile , null ,
                 function(x) {
-                    console.log("CallBack function for images called");
+                    //console.log("CallBack function for images called");
                     if(x.readyState == XMLHttpRequest.DONE){
-                        console.log("Setting the audio in src");
+                        //console.log("Setting the audio in src");
 
                         //Convert the array buffer in bytes
                         let bytes = new Uint8Array(x.response);
@@ -651,8 +648,19 @@
             let row , dataCell , nameCell;
             //Save this for the closure
             let self = this;
+            
+            //Empty the table
+            this.listBodyContainer.innerHTML = "";
 
-            playListSongsToOrder.songs.forEach( function(song) {
+			console.log("The number of songs in playListToOrder is " + playListSongsToOrder.songs.length);
+
+            //playListSongsToOrder.songs.forEach( function(song) {
+            
+            for(let i = 0 ; i < playListSongsToOrder.songs.length ; i++){
+            
+            	console.log("Entered in the for: iteration number " + i);
+            
+            	let song = playListSongsToOrder.songs[i];
 
                 row = document.createElement("tr");
                 row.className = "draggable";
@@ -662,10 +670,17 @@
                 nameCell = document.createTextNode(song.title);
                 dataCell.appendChild(nameCell);
                 row.appendChild(dataCell);
+                
+                self.listBodyContainer.appendChild(row);
+                
+                console.log("Appended element with id " + song.id + " and title " + song.title);
 
-            });
+            }
+            console.log("After the for");
             this.listContainer.style.visibility = "visible";
             //call the other file
+            //Add listeners to the new row
+            handleSorting.addEventListeners();
         }
     }
 

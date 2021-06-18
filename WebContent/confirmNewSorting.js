@@ -8,12 +8,15 @@
         console.log("Sending the new sorting to the server to memorize it");
         let rows = Array.from(document.getElementById("sortPlayListTable").querySelectorAll('tbody > tr'));
         //Fill sortingToSend with the id of the songs
-        let sortingToSend = null;
+        let sortingToSend = new Array();
 
         for(let i = 0 ; i < rows.length ; i++){
             //Add just the id of the song
-            sortingToSend.add(rows[i].getAttribute("songId"));
+            //sortingToSend.add(rows[i].getAttribute("songId"));
+            sortingToSend.push(rows[i].getAttribute("songId"));
         }
+        
+        console.log("The new sorting is: " + sortingToSend.toString());
 
         //TODO add a control in case of length 0 or 1
 
