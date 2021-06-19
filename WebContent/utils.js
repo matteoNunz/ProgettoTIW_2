@@ -22,18 +22,19 @@ function makeCall(method, url, formElement, callBack , objectToSend , isRequesti
     if(isRequestingFile)
         request.responseType = "arraybuffer";
 
-    if (formElement == null) {
+    if (formElement == null && objectToSend == null) {
         request.send();
     } else if(formElement != null){
     	//Send the form
         console.log("Form sent");
         request.send(new FormData(formElement));
-    } else if(objectToSend == null){
-    	request.send();
     } else {
-		        //Send the object
+		//Send the object
         console.log("Object sent");
-        request.send(objectToSend);//TODO to verify
+        //request.addAttribute("newSorting" , objectToSend);
+        let toSend = JSON.stringify(objectToSend);
+        console.log("toSend is: " + toSend.toString());
+        request.send(toSend);//TODO to verify
     }
 
     //If there is a form and reset is true -> reset the fields of the form

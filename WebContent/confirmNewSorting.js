@@ -33,6 +33,7 @@
                         case 200:
                             //Come back to the home page
                             //TODO add a method in the pageOrchestrator
+                            playlistList.autoClick(playListSongsToOrder.playlistId);
                             break;
 
                         case 403:

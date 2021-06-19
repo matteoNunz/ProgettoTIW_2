@@ -115,6 +115,9 @@ public class GetSongsInPLaylist extends HttpServlet{
 		//to take songs in and not in the specified playList
 		SongDAO sDao = new SongDAO(connection);
 		
+		//To take a specific ordering for songs (if present)
+		PlaylistDAO pDao = new PlaylistDAO(connection);
+		
 		//To take the title of the playList
 		//PlaylistDAO pDao = new PlaylistDAO(connection);
 		
@@ -122,6 +125,7 @@ public class GetSongsInPLaylist extends HttpServlet{
 		try {
 			
 			ArrayList<SongDetails> songsInPlaylist = sDao.getSongTitleAndImg(id);
+			ArrayList<Integer> sorting = pDao.getSorting(id);
 			
 			int numberOfSongs = songsInPlaylist.size();
 			
@@ -159,19 +163,41 @@ public class GetSongsInPLaylist extends HttpServlet{
 			JSONArray jArray = new JSONArray();
 			JSONObject jSonObject;
 			
-			
-			for(SongDetails song : songsInPlaylist) {
-				System.out.println("Title: " + song.getSongTitle());
-				
-				//Here to reset the attribute for each song
-				jSonObject = new JSONObject();
-				
-				jSonObject.put("songId", song.getId());
-				jSonObject.put("songTitle" , song.getSongTitle());
-				jSonObject.put("fileName" , song.getImgFile());
-				
-				jArray.put(jSonObject);
+			if(sorting != null) {
+				//Reorder the songs
+				for(Integer i : sorting) {
+					for(SongDetails song : songsInPlaylist) {
+						if(song.getId() == i) {
+							
+							//Here to reset the attribute for each song
+							jSonObject = new JSONObject();
+							
+							jSonObject.put("songId", song.getId());
+							jSonObject.put("songTitle" , song.getSongTitle());
+							jSonObject.put("fileName" , song.getImgFile());
+							
+							jArray.put(jSonObject);
+							break;
+						}
+					}
+				}
 			}
+			else {
+				//Songs with standard ordering
+				for(SongDetails song : songsInPlaylist) {
+					System.out.println("Title: " + song.getSongTitle());
+					
+					//Here to reset the attribute for each song
+					jSonObject = new JSONObject();
+					
+					jSonObject.put("songId", song.getId());
+					jSonObject.put("songTitle" , song.getSongTitle());
+					jSonObject.put("fileName" , song.getImgFile());
+					
+					jArray.put(jSonObject);
+				}
+			}
+			
 			
 			System.out.println("Prining jArray: ");
 			System.out.println(jArray.toString());

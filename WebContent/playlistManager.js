@@ -214,7 +214,7 @@
 
         this.autoClick = function(playlistId) {
             let e = new Event("click");
-            let selector = "a[playlistId=" + playlistId + "']";
+            let selector = "a[playlistId=" + "\"" +  playlistId + "\"]";
             //Take the first element or the specified playlist
             let anchorToClick = (playlistId) ?
                 document.querySelector(selector) :
@@ -419,8 +419,8 @@
 
         this.autoClick = function(songId) {
             let e = new Event("click");
-            let selector = "a[songId=" + songId + "']";
-            //Take the first element or the specified playlist
+            let selector = "a[songId=" + "\"" +  songId + "\"]";
+            //Take the first element or the specified playList
 
             let anchorToClick = (songId) ?
                 document.querySelector(selector) :

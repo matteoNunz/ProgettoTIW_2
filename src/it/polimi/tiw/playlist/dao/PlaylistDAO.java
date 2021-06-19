@@ -298,8 +298,99 @@ public class PlaylistDAO {
 				throw new SQLException(e2);
 		    }
 		}
-		return result;
+		return result;	
+	}
+	
+	/**
+	 * Method that inserts a new sorting of the playList in the playList table in the data base
+	 * @param pId is the id of the playList
+	 * @param jsonSorting is a string containing a json with song ids in the new order
+	 * @return true if everything went good , false otherwise
+	 * @throws SQLException
+	 */
+	public boolean addSorting(int pId , String jsonSorting) throws SQLException{
+		String query = "UPDATE playlist SET Sorting = ? WHERE Id = ?";
+		int code = 0;
+		PreparedStatement pStatement = null;
 		
+		try{
+			pStatement = connection.prepareStatement(query);
+			pStatement.setString(1, jsonSorting);
+			pStatement.setInt(2, pId);
+			code = pStatement.executeUpdate();
+		}catch(SQLException e) {
+			throw new SQLException();
+		}finally {
+			try {
+				if(pStatement != null) {
+					pStatement.close();
+				}
+			}catch(Exception e2) {
+				throw new SQLException(e2);
+		    }
+		}
+		
+		return (code > 0);
+	}
+	
+	/**
+	 * Method that take the sorting of a playList and convert the string into an arrayList
+	 * @param pId is the id of the playList to take the sorting
+	 * @return an arrayList of integer containing the songId in the order chose by the user
+	 * @throws SQLException
+	 */
+	public ArrayList<Integer> getSorting(int pId) throws SQLException{
+		String query = "SELECT Sorting FROM playlist WHERE Id = ?";
+		PreparedStatement pStatement = null;
+		ResultSet resultSet = null;
+		String jSon = null;
+		
+		ArrayList<Integer> sortedArray = new ArrayList<Integer>();
+		int num = 0;
+		boolean wasNumber = false;
+		
+		
+		try {
+			pStatement = connection.prepareStatement(query);
+			pStatement.setInt(1, pId);
+			
+			resultSet = pStatement.executeQuery();
+			
+			if(resultSet.next())
+				 jSon = resultSet.getString("Sorting");
+			
+			if(jSon == null)
+				return null;
+			//Convert the jSon into an array of integer
+			for(int i = 4 ; i < jSon.length() ; i++) {
+				System.out.println("Processing character " + jSon.charAt(i));
+				//92 is the "\" character
+				if(jSon.charAt(i) == '[' || jSon.charAt(i) == ']' || jSon.charAt(i) == 92 || jSon.charAt(i) == ',' || jSon.charAt(i) == '"') {
+					if(wasNumber) {
+						System.out.println("Added number: " + num);
+						sortedArray.add(num);
+						num = 0;
+						wasNumber = false;
+					}
+					continue;
+				}
+				num = num * 10 + (jSon.charAt(i) - 48);
+				wasNumber = true;
+			}
+			
+		}catch(SQLException e) {
+			throw new SQLException();
+		}finally {
+			try {
+				if(pStatement != null) {
+					pStatement.close();
+				}
+			}catch(Exception e2) {
+				throw new SQLException(e2);
+		    }
+		}
+		
+		return sortedArray;
 	}
 	
 }
