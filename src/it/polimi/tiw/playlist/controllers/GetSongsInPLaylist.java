@@ -27,6 +27,7 @@ import it.polimi.tiw.playlist.beans.User;
 import it.polimi.tiw.playlist.dao.PlaylistDAO;
 import it.polimi.tiw.playlist.dao.SongDAO;
 import it.polimi.tiw.playlist.utils.ConnectionHandler;
+import it.polimi.tiw.playlist.utils.GetEncoding;
 
 @WebServlet("/GetSongsInPlaylist")
 @MultipartConfig
@@ -175,6 +176,12 @@ public class GetSongsInPLaylist extends HttpServlet{
 							jSonObject.put("songId", song.getId());
 							jSonObject.put("songTitle" , song.getSongTitle());
 							jSonObject.put("fileName" , song.getImgFile());
+							try {
+								jSonObject.put("base64String" , GetEncoding.getImageEncoding(song.getImgFile() , 
+										getServletContext() , connection , user));
+							} catch(IOException e) {
+								jSonObject.put("base64String" , "");
+							}
 							
 							jArray.put(jSonObject);
 							break;
@@ -193,6 +200,13 @@ public class GetSongsInPLaylist extends HttpServlet{
 					jSonObject.put("songId", song.getId());
 					jSonObject.put("songTitle" , song.getSongTitle());
 					jSonObject.put("fileName" , song.getImgFile());
+					
+					try {
+						jSonObject.put("base64String" , GetEncoding.getImageEncoding(song.getImgFile() , 
+								getServletContext() , connection , user));
+					} catch(IOException e) {
+						jSonObject.put("base64String" , "");
+					}
 					
 					jArray.put(jSonObject);
 				}

@@ -10,7 +10,7 @@
  * @param callBack is the function to call when arrive the answer
  * @param reset true reset the fields of the form
  */
-function makeCall(method, url, formElement, callBack , objectToSend , isRequestingFile , reset = true) {
+function makeCall(method, url, formElement, callBack , objectToSend , reset = true) {
     let request = new XMLHttpRequest(); // visible by closure
     request.onreadystatechange = function() {
     	console.log("Request is onReadyStateChange");
@@ -18,9 +18,6 @@ function makeCall(method, url, formElement, callBack , objectToSend , isRequesti
     }; // closure
 
     request.open(method, url);
-
-    if(isRequestingFile)
-        request.responseType = "arraybuffer";
 
     if (formElement == null && objectToSend == null) {
         request.send();

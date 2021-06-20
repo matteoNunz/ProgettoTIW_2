@@ -368,39 +368,9 @@
                 image = document.createElement("img");
                 imageCell.appendChild(image);
 
-                //TODO how add the image?? With an attribute?
-
-                //image.src = songToShow.fileName;
-
+				//alert(songToShow.base64String);
+                image.src = songToShow.base64String;
                 
-                //console.log("Calling GetImage/" + songToShow.fileName);
-                
-                makeCall("GET" , "GetImage/" + songToShow.fileName , null ,
-                    function(x) {
-                        if(x.readyState == XMLHttpRequest.DONE){
-                            //Convert the array buffer in bytes
-                            let bytes = new Uint8Array(x.response);
-                            //alert(bytes);
-
-                            //Convert the numeric byte array to a string
-                            let string = String.fromCharCode.apply(null , bytes);
-                            //alert(string);
-
-                            //Convert the string to a base64 string
-                            let base64 = btoa(string);
-                            //alert(base64);
-
-                            //TODO it can be jpeg too -> if it works return the base64 directly from the servlet
-                            //Add the header to the base64 string
-                            let dataUrl = "data:image/jpeg;base64," + base64;
-                            //alert(dataUrl);
-
-                            image.src = dataUrl;
-                            //image.src = x.response;
-                        }
-                    } , null , true
-                );
-
                 anchor = document.createElement("a");
                 songNameCell.appendChild(anchor);
                 linkText = document.createTextNode(songToShow.songTitle);
@@ -588,39 +558,15 @@
             row.appendChild(publicationYearCell);
 
             genreCell = document.createElement("td");
-            genreCell.appendChild(document.createTextNode(songDetails.kindOf));
+            genreCell.appendChild(document.createTextNode(songDetails.genre));
             row.appendChild(genreCell);
 
             playCell = document.createElement("audio");
-            playCell.setAttribute("type" , "audio/mpeg");
+            //playCell.setAttribute("type" , "audio/mpeg");
+            playCell.type = "audio/mpeg";
+            playCell.controls = "controls"
+            playCell.src = songDetails.base64String;
             row.appendChild(playCell);
-
-            makeCall("GET" , "GetSong/" + songDetails.songFile , null ,
-                function(x) {
-                    //console.log("CallBack function for images called");
-                    if(x.readyState == XMLHttpRequest.DONE){
-                        //console.log("Setting the audio in src");
-
-                        //Convert the array buffer in bytes
-                        let bytes = new Uint8Array(x.response);
-                        //alert(bytes);
-
-                        //Convert the numeric byte array to a string
-                        let string = String.fromCharCode.apply(null , bytes);
-                        //alert(string);
-
-                        //Convert the string to a base64 string
-                        let base64 = btoa(string);
-                        //alert(base64);
-
-                        //Add the header to the base64 string
-                        let dataUrl = "data:audio/mpeg;base64," + base64;
-                        //alert(dataUrl);
-
-                        playCell.src = dataUrl;
-                    }
-                } , null , true
-            );
 
             this.listBodyContainer.appendChild(row);
             this.listContainer.style.visibility = "visible";

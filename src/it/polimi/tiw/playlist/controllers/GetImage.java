@@ -7,6 +7,7 @@ import java.nio.file.Files;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.Base64;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -16,6 +17,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
+import org.apache.commons.io.FileUtils;
 
 import it.polimi.tiw.playlist.beans.User;
 import it.polimi.tiw.playlist.dao.SongDAO;
@@ -75,6 +78,21 @@ public class GetImage extends HttpServlet{
 			//Set an error
 			return;
 		}
+		
+		System.out.println("Processing the base64 encoding for the image");
+		//Take the byte array of the image
+		byte[] fileContent = FileUtils.readFileToByteArray(file);
+		//Take the base64 string
+		String encodedString = Base64.getEncoder().encodeToString(fileContent);
+		System.out.println("Mime type og this song is: " + getServletContext().getMimeType(filename));
+		
+		//Take the right type of each file (png , jpeg ...)
+		encodedString = "data:" + getServletContext().getMimeType(filename) + ";base64," + encodedString ;
+		
+		System.out.println("The base64 encoded string is:" + encodedString);
+		
+		System.out.println("Orignal file size is : " + file.length());
+		System.out.println("Encoded string size is : " + encodedString.length());
 		
 		response.setStatus(HttpServletResponse.SC_OK);//Code 200
 		

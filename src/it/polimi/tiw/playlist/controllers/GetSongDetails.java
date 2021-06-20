@@ -15,6 +15,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringEscapeUtils;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -24,6 +26,7 @@ import it.polimi.tiw.playlist.beans.User;
 import it.polimi.tiw.playlist.dao.PlaylistDAO;
 import it.polimi.tiw.playlist.dao.SongDAO;
 import it.polimi.tiw.playlist.utils.ConnectionHandler;
+import it.polimi.tiw.playlist.utils.GetEncoding;
 
 @WebServlet("/GetSongDetails")
 @MultipartConfig
@@ -101,23 +104,42 @@ public class GetSongDetails extends HttpServlet{
 		
 		try {
 			SongDetails song = sDao.getSongDetails(sId);
-
+			
+			JSONObject jSonObject = new JSONObject();
+			
+			jSonObject.put("songTitle" , song.getSongTitle());
+			jSonObject.put("singer" , song.getSinger());
+			jSonObject.put("albumTitle" , song.getAlbumTitle());
+			jSonObject.put("publicationYear" , song.getPublicationYear());
+			jSonObject.put("genre" , song.getKindOf());
+			
+			try {
+				jSonObject.put("base64String" , GetEncoding.getSongEncoding(song.getSongFile(), 
+						getServletContext(), connection, user));
+				
+			}catch(IOException e) {
+				jSonObject.put("base64String" , "");
+			}
+			
 			//Create the jSon with the answer
-			Gson gSon = new GsonBuilder().create();
+			/*Gson gSon = new GsonBuilder().create();
 			String jSon = gSon.toJson(song);
 			
 			System.out.println("Printing the jSon with all the song not in the playlist");
-			System.out.println(jSon.toString());
+			System.out.println(jSon.toString());*/
 			
 			response.setStatus(HttpServletResponse.SC_OK);//Code 200
 			response.setContentType("application/json");
 			response.setCharacterEncoding("UTF-8");
-			response.getWriter().println(jSon);
+			response.getWriter().println(jSonObject);
 			
 		}catch(SQLException e) {
 			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);//Code 500
 			response.getWriter().println("An arror occurred with the db, retry later");
 			return;
+		}catch(JSONException e) {
+			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);//Code 500
+			response.getWriter().println("Internal server error, error during the creation of the response");
 		}
 	}
 	
