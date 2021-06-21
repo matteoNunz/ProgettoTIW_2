@@ -1,11 +1,12 @@
 {
     //Page components
     var playlistList;
-    var songsInPLayList;
+    var songsInPlayList;
     var songsNotInPlayList;
     var songDetails;
     var sortingList;
     var playListSongsToOrder = new PlayListSongsToOrder();
+    var handleButtons;
     let personalMessage;
     let playListMessage;
     let pageOrchestrator = new PageOrchestrator();
@@ -53,6 +54,15 @@
         if(sessionStorage.getItem("userName") == null){
             window.location.href = "login.html";
         }else{
+        
+    		(function() {
+	        	document.getElementById("beforeButton").addEventListener("click" , () => {
+        			songsInPlayList.update(songsInPlayList.section - 1);
+        		} , false);
+	        	document.getElementById("nextButton").addEventListener("click" , () => {
+        			songsInPlayList.update(songsInPlayList.section + 1);
+        		} , false);
+        	})();
             pageOrchestrator.start();
             pageOrchestrator.refresh();
         }
@@ -72,8 +82,33 @@
         }
     }
 
+    function HandleButtons(before , next) {
+    	this.before = before;
+    	this.next = next;
+    	
+    	console.log("Before and next are: " + before + "," + next);
+    	
+    	this.showBefore = function() {
+    		this.before.style.visibility = "visible";
+    	}
+    	
+    	this.hideBefore = function() {
+    		this.before.style.visibilty = "hidden";
+    		console.log("Hiding before");
+    	}
+    	
+    	this.showNext = function() {
+    		this.next.style.visibility = "visible";
+    	}
+    	
+    	this.hideNext = function() {
+    		this.next.style.visibilty = "hidden";
+    		console.log("Hiding next");
+    	}
+    }
+
     /**
-     * FUnction that show the name of the current playlist the user is watching
+     * Function that show the name of the current playlist the user is watching
      * @param playlistName is the name of the playlist
      * @param messageContainer id the tag where put the name of the playlist
      */
@@ -189,7 +224,7 @@
                     //Reset the playListSongsToOrder
                     playListSongsToOrder.reset();
                     //Show songs in the playList selected
-                    songsInPLayList.show(e.target.getAttribute("playlistId"));
+                    songsInPlayList.show(e.target.getAttribute("playlistId"));
                     //Show songs not in the playList selected
                     songsNotInPlayList.show(e.target.getAttribute("playlistId"));
                     //Show the title
@@ -240,6 +275,8 @@
         this.listContainer = listContainer;
         this.listBodyContainer = listBodyContainer;
         this.playlistId = null;
+        this.songs = null;
+        this.section = 0;
 
         this.reset = function() {
             this.listContainer.style.visibility = "hidden";
@@ -259,10 +296,26 @@
                                 let songs = JSON.parse(request.responseText);
         
                                 if(songs.length == 0){
+                                    //Empty the body of the table
+            						self.listBodyContainer.innerHTML = "";
                                     self.alertContainer.textContent = "No songs yet";
                                     return;
                                 }
-                                self.update(songs , 0);
+                                self.songs = songs;
+                                
+                                //Set the playlistId
+					            playListSongsToOrder.playlistId = this.playlistId;
+					            
+					            //Save song titles and ids
+					            self.songs.forEach( function(songToOrder) {
+					                //Create a new song object
+					                let song = new Song(songToOrder.songId , songToOrder.songTitle);
+					                //Add it to playListSongsToOrder
+					                playListSongsToOrder.addSong(song);
+					            });
+                                
+                                
+                                self.update(0);
 
                                 //Launch the autoClick to select a song to show
                                 self.autoClick();
@@ -283,23 +336,14 @@
             );
         }
 
-        this.update = function(songs , section) {
+        this.update = function(section) {
+        	
             //Elements of the table
             let row, internalTableCell , imageRow , imageCell, songNameRow , songNameCell, internalTable , anchor, linkText , image;
             //Save this to make it visible in the function
             let self = this;
             //Empty the body of the table
             this.listBodyContainer.innerHTML = "";
-
-            //Set the playlistId
-            playListSongsToOrder.playlistId = this.playlistId;
-            //Save song titles and ids
-            songs.forEach( function(songToOrder) {
-                //Create a new song object
-                let song = new Song(songToOrder.songId , songToOrder.songTitle);
-                //Add it to playListSongsToOrder
-                playListSongsToOrder.addSong(song);
-            })
             
                         
             //TODO now here, in future there will be a button to do that
@@ -313,20 +357,37 @@
             if (section < 0 || !section) {
                 section = 0;
             }
-            if (section * 5 + 5 > songs.length) {
-                section = (songs.length / 5);
+            if (section * 5 + 5 > this.songs.length) {
+                section = (this.songs.length / 5);
                 //Save just the number before the point
                 section = parseInt(section.toString().split(".")[0]);
             }
-            if ((section * 5 + 5) < songs.length) {
+            if ((section * 5 + 5) < this.songs.length) {
                 next = true;
             }
-
+            
+        	//Set the current section
+        	this.section = section;
+            
+            if(next){
+            	handleButtons.showNext();
+            }
+            else{
+            	handleButtons.hideNext();
+            }
+            
+          	if(section > 0){
+            	handleButtons.showBefore();
+            }
+            else{
+            	handleButtons.hideBefore();
+            }
+            
             let songsToShow;
 
-            if (songs.length >= section * 5 + 5){
+            if (this.songs.length >= section * 5 + 5){
             	//console.log("Case (songs.length >= section * 5 + 5)");
-            	songsToShow = songs.slice(section * 5, section * 5 + 5); // [)
+            	songsToShow = this.songs.slice(section * 5, section * 5 + 5); // [)
             }   
                
             else{
@@ -334,7 +395,7 @@
             	//console.log("Section is " + section);
             	//console.log("Songs length is " + songs.length);
             	//console.log(songs.slice(section * 5, songs.length));
-            	songsToShow = songs.slice(section * 5, songs.length); // [)
+            	songsToShow = this.songs.slice(section * 5, this.songs.length); // [)
             }
                 
                 
@@ -378,7 +439,7 @@
                 anchor.setAttribute("songId" , songToShow.songId);
                 anchor.href = "#";
                 anchor.addEventListener("click" , (e) => {
-                   songDetails.show(e.target.getAttribute("songId") , songsInPLayList.playlistId);
+                   songDetails.show(e.target.getAttribute("songId") , songsInPlayList.playlistId);
                 });
 
                 row.appendChild(internalTableCell);
@@ -642,6 +703,8 @@
             //Set the personal message and show it. Question: why I don't have to save the container in the object as for the userName?
             personalMessage = new PersonalMessage(sessionStorage.getItem("userName") , document.getElementById("userName"));
             personalMessage.show();
+            
+            handleButtons = new HandleButtons(document.getElementById("before") , document.getElementById("next"));
 
             playListMessage = new PlaylistMessage(document.getElementById("playlistNameMessage"));
 
@@ -650,7 +713,7 @@
                                             document.getElementById("playlistTableBody"));
 
             //Initialize the songs in the playList
-            songsInPLayList = new SongsInPlaylist(songInPlaylistError , document.getElementById("songTable") ,
+            songsInPlayList = new SongsInPlaylist(songInPlaylistError , document.getElementById("songTable") ,
                                             document.getElementById("songTableBody"));
 
             //Initialize songs not in the playlist

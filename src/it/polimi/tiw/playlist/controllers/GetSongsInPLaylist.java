@@ -164,6 +164,7 @@ public class GetSongsInPLaylist extends HttpServlet{
 			JSONArray jArray = new JSONArray();
 			JSONObject jSonObject;
 			
+			//TODO add the case when the user add a song in a ordered playList -> show it in the end
 			if(sorting != null) {
 				//Reorder the songs
 				for(Integer i : sorting) {
