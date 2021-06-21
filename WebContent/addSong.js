@@ -26,7 +26,7 @@
                         switch(request.status){
                             case 200:
                                 //Update the view
-                                songsInPLayList.show(songsNotInPlayList.playlistId);
+                                songsInPlayList.show(songsNotInPlayList.playlistId);
                                 songsNotInPlayList.show(songsNotInPlayList.playlistId);
                                 break;
 

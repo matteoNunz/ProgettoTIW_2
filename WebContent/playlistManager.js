@@ -86,24 +86,20 @@
     	this.before = before;
     	this.next = next;
     	
-    	console.log("Before and next are: " + before + "," + next);
-    	
     	this.showBefore = function() {
-    		this.before.style.visibility = "visible";
+    		this.before.style.display = "";
     	}
     	
     	this.hideBefore = function() {
-    		this.before.style.visibilty = "hidden";
-    		console.log("Hiding before");
+    		this.before.style.display = "none";
     	}
     	
     	this.showNext = function() {
-    		this.next.style.visibility = "visible";
+    		this.next.style.display = "";
     	}
     	
     	this.hideNext = function() {
-    		this.next.style.visibilty = "hidden";
-    		console.log("Hiding next");
+    		this.next.style.display = "none";
     	}
     }
 
@@ -304,7 +300,9 @@
                                 self.songs = songs;
                                 
                                 //Set the playlistId
-					            playListSongsToOrder.playlistId = this.playlistId;
+					            playListSongsToOrder.playlistId = self.playlistId;
+					            //Reset the array
+					            playListSongsToOrder.reset();
 					            
 					            //Save song titles and ids
 					            self.songs.forEach( function(songToOrder) {
@@ -704,7 +702,8 @@
             personalMessage = new PersonalMessage(sessionStorage.getItem("userName") , document.getElementById("userName"));
             personalMessage.show();
             
-            handleButtons = new HandleButtons(document.getElementById("before") , document.getElementById("next"));
+            //handleButtons = new HandleButtons(document.getElementById("before") , document.getElementById("next"));
+            handleButtons = new HandleButtons(document.getElementById("beforeButton") , document.getElementById("nextButton"));
 
             playListMessage = new PlaylistMessage(document.getElementById("playlistNameMessage"));
 

@@ -163,8 +163,7 @@ public class GetSongsInPLaylist extends HttpServlet{
 			//Send all the song of the playList
 			JSONArray jArray = new JSONArray();
 			JSONObject jSonObject;
-			
-			//TODO add the case when the user add a song in a ordered playList -> show it in the end
+
 			if(sorting != null) {
 				//Reorder the songs
 				for(Integer i : sorting) {
@@ -185,8 +184,30 @@ public class GetSongsInPLaylist extends HttpServlet{
 							}
 							
 							jArray.put(jSonObject);
+							
+							//Remove the song read
+							songsInPlaylist.remove(song);
 							break;
 						}
+					}
+				}
+				//If there are no sorted songs show them as last
+				if(songsInPlaylist.size() > 0) {
+					for(SongDetails song : songsInPlaylist) {
+						
+						jSonObject = new JSONObject();
+						
+						jSonObject.put("songId", song.getId());
+						jSonObject.put("songTitle" , song.getSongTitle());
+						jSonObject.put("fileName" , song.getImgFile());
+						try {
+							jSonObject.put("base64String" , GetEncoding.getImageEncoding(song.getImgFile() , 
+									getServletContext() , connection , user));
+						} catch(IOException e) {
+							jSonObject.put("base64String" , "");
+						}
+						
+						jArray.put(jSonObject);
 					}
 				}
 			}
