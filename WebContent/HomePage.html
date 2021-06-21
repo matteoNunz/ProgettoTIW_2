@@ -22,7 +22,7 @@
 		</div>
 		<br>
 		
-		<div class="homePage">
+		<div class="homePage" id="homePage">
 			<fieldset class="createSongField">
 				<form action="#">
 					Add a new song in your DataBase<br>
@@ -86,6 +86,8 @@
 			<br>
 			<p class = "error" id="songTableError"></p>
 			<br><br>
+			<p><input type="button" id="goToSortingPageButton" value="Order PlayList"></p>
+			<br><br>
 
 			<div class="addSongToPlaylistDiv" id="addSongToPlaylistDiv">
 				<fieldset>
@@ -123,7 +125,7 @@
 		</div>
 
 		<br><br>
-		<div class="sortPlayList" id="sortPlayList">
+		<div class="sortPlayListPage" id="sortPlayListPage">
 			<table class="sortPlayListTable" id="sortPlayListTable">
 				<thead>
 					<tr>
@@ -135,6 +137,7 @@
 				</tbody>
 			</table>
 			<p><input type="button" id="confirmSortingButton" value="Save"></p>
+			<p><input type="button" id="goToMainPageButton" value="Back"></p>
 			<p class = "error" id="sortingError"></p>
 		</div>
 
