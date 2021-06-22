@@ -736,7 +736,7 @@
             
             //handleButtons = new HandleButtons(document.getElementById("before") , document.getElementById("next"));
             handleButtons = new HandleButtons(document.getElementById("beforeButton") , document.getElementById("nextButton"));
-
+            
             playListMessage = new PlaylistMessage(document.getElementById("playlistNameMessage"));
 
             //Initialize the playlist table
