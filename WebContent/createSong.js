@@ -73,8 +73,9 @@
                     if(x.readyState = XMLHttpRequest.DONE){
                         switch(x.status){
                             case 200:
-                                //TODO update the list of songs I can add in the playlist selected
+                                //TODO update the list of songs I can add in the playList selected
                                 console.log("Song added correctly");
+                                songsNotInPlayList.show(songsNotInPlayList.playlistId);
                                 //Reset the form if the request was successful
                                 form.reset();
                                 break;

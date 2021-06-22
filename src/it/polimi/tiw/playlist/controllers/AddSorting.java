@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -19,8 +20,11 @@ import org.apache.commons.lang.StringEscapeUtils;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import it.polimi.tiw.playlist.beans.User;
 import it.polimi.tiw.playlist.dao.PlaylistDAO;
+import it.polimi.tiw.playlist.dao.SongDAO;
 import it.polimi.tiw.playlist.utils.ConnectionHandler;
+import it.polimi.tiw.playlist.utils.FromJsonToArray;
 
 @WebServlet("/AddSorting")
 @MultipartConfig
@@ -90,10 +94,27 @@ public class AddSorting extends HttpServlet {
 			System.out.println("Add more songs to order you playlist!");
 		}
 		
+		ArrayList<Integer> sortedArray = FromJsonToArray.fromJsonToArrayList(newSorting);
+		SongDAO sDao = new SongDAO(connection);
+		
+		//verify if each song id belongs to the user
+		for(Integer id : sortedArray) {
+			try {
+				if(!sDao.findSongByUser(((int) id) , ((User) request.getSession().getAttribute("user")).getId()) ){
+					//Delete this id -> it doesn't belong to this user
+					sortedArray.remove(id);
+				}
+			}catch(SQLException e) {
+				sortedArray.remove(id);
+			}
+		}
+		
+		String updatedSorting = gSon.toJson(sortedArray);
+		
 		PlaylistDAO pDao = new PlaylistDAO(connection);
 		
 		try {
-			boolean result = pDao.addSorting(pId, newSorting);
+			boolean result = pDao.addSorting(pId, updatedSorting);
 			
 			if(result == true) {
 				response.setStatus(HttpServletResponse.SC_OK);//Code 200

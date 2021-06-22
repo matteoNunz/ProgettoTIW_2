@@ -12,6 +12,8 @@
 		<script src="addSong.js" charset="utf-8" defer></script>
 		<script src="confirmNewSorting.js" charset="utf-8" defer></script>
 		<script src="d&dSorting.js" charset="utf-8" defer></script>
+		
+		<link rel="shortcut icon" href="Images/MusicalNote.jpg" />
 	</head>
 
 	<body>
@@ -23,6 +25,33 @@
 		<br>
 		
 		<div class="homePage" id="homePage">
+	
+			<table class="playlistTable" id="playlistTable">
+				<thead class="playlistTableHead" id="playlistTableHead">
+					<tr>
+						<th>PlayList name</th>
+						<th>Creation date</th>
+					</tr>
+				</thead>
+	
+				<tbody class="playlistTableBody" id="playlistTableBody">
+				</tbody>
+			</table>
+			<p class = "error" id="playlistTableError"></p>
+			
+			<br><br>
+			
+			<fieldset class="createPlaylistField">
+				<form action="#">
+					Create a new playList<br>
+					<p>Title: <input type="text" id="name" name="name" required></p>
+					<p><input type="button" id="createPlaylistButton" value="submit"></p>
+					<p class = "error" id="createPlaylistError"></p>
+				</form>
+			</fieldset>
+			
+			<br><br>
+			
 			<fieldset class="createSongField">
 				<form action="#">
 					Add a new song in your DataBase<br>
@@ -40,30 +69,6 @@
 					<p>MP3 file: 				<input type="file" id="songFile" name="songFile" accept="audio/*" required></p>
 					<p><input type="button" id="createSongButton" value="submit"></p>
 					<p class = "error" id="songError">
-				</form>
-			</fieldset>
-			<br><br>
-	
-			<table class="playlistTable" id="playlistTable">
-				<thead class="playlistTableHead" id="playlistTableHead">
-					<tr>
-						<th>PlayList name</th>
-						<th>Creation date</th>
-					</tr>
-				</thead>
-	
-				<tbody class="playlistTableBody" id="playlistTableBody">
-				</tbody>
-			</table>
-			<p class = "error" id="playlistTableError"></p>
-			
-			<br><br>
-			<fieldset class="createPlaylistField">
-				<form action="#">
-					Create a new playList<br>
-					<p>Title: <input type="text" id="name" name="name" required></p>
-					<p><input type="button" id="createPlaylistButton" value="submit"></p>
-					<p class = "error" id="createPlaylistError"></p>
 				</form>
 			</fieldset>
 		</div>
@@ -85,20 +90,21 @@
 			</div>
 			<br>
 			<p class = "error" id="songTableError"></p>
-			<br><br>
+			
+			<br>
 			<p><input type="button" id="goToSortingPageButton" value="Order PlayList"></p>
-			<br><br>
+			<br>
 
 			<div class="addSongToPlaylistDiv" id="addSongToPlaylistDiv">
-				<fieldset>
+				<fieldset class="addSongToPlaylistFieldset" id="addSongToPlaylistFieldset">
 					<form id="addSongToPLayListForm" action="#">
 						<select id="addSongToPlayList" name="addSongToPlayList">
 
 						</select>
 						<p><input type="button" id="addSongButton" value="submit"></p>
 					</form>
-					<p id="addSongMessage"></p>
 				</fieldset>
+				<p id="addSongMessage"></p>
 			</div>
 		</div>
 		
@@ -125,11 +131,16 @@
 		</div>
 
 		<br><br>
+		
 		<div class="sortPlayListPage" id="sortPlayListPage">
+			<h3 class="playlistToOrder" id="playlistToOrder"></h3>
+			
+			<br><br>
+			
 			<table class="sortPlayListTable" id="sortPlayListTable">
 				<thead>
 					<tr>
-						<td>Song Name</td>
+						<td class="tableHeader" id="tableHeader">Song Name</td>
 					</tr>
 				</thead>
 				<tbody class="sortPlayListBody" id="sortPLayListBody">

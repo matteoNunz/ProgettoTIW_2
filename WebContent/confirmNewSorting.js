@@ -34,6 +34,7 @@
                             //Come back to the home page
                             //TODO add a method in the pageOrchestrator
                             //playlistList.autoClick(playListSongsToOrder.playlistId);
+                            songsInPlayList.show(songsInPlayList.playlistId);
                             pageOrchestrator.showMainPage();
                             break;
 

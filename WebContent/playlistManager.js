@@ -1,4 +1,7 @@
 {
+
+	//TODO: add method resetError that reset the errors every time there is an action
+	
     //Page components
     var playlistList;
     var songsInPlayList;
@@ -109,7 +112,7 @@
 
         this.show = function() {
             this.messageContainer.textContent = this.playlistName;
-            this.messageContainer.style.ability = "";
+            this.messageContainer.style.display = "";
         }
 
         this.setPlayListName = function(playlistName) {
@@ -287,15 +290,31 @@
                     	self.alertContainer.textContent = "";
                         switch(request.status){
                             case 200:
-                                let songs = JSON.parse(request.responseText);
+                                let songsReceived = JSON.parse(request.responseText);
+        						
+        						console.log("Showing songsReceived length: " + songsReceived.length);
+        						if(songsReceived.length > 1){
+                                	document.getElementById("goToSortingPageButton").style.display = "";
+                                	console.log("Showing the go to sorting page button");
+                                }
+                                else{
+                                	document.getElementById("goToSortingPageButton").style.display = "none";
+                                	console.log("Hiding the go to sorting page button");
+                                }
         
-                                if(songs.length == 0){
+        
+                                if(songsReceived.length == 0){
                                     //Empty the body of the table
             						self.listBodyContainer.innerHTML = "";
+            						handleButtons.hideBefore();
+            						handleButtons.hideNext();
+            						songDetails.reset();
                                     self.alertContainer.textContent = "No songs yet";
                                     return;
                                 }
-                                self.songs = songs;
+
+                                self.songs = songsReceived;
+                                
                                 
                                 //Set the playlistId
 					            playListSongsToOrder.playlistId = self.playlistId;
@@ -314,7 +333,9 @@
                                 self.update(0);
 
                                 //Launch the autoClick to select a song to show
-                                self.autoClick();
+                                if(self.playlistId !== songDetails.playlistId){
+                              		self.autoClick();
+                          		}
                                 break;
 
                             case 403:
@@ -470,8 +491,9 @@
      * @param listContainer is the container of the form
      * @param select is the select inside the form to be fulled
      */
-    function SongsNotInPlaylist(alertContainer , listContainer , select){
+    function SongsNotInPlaylist(alertContainer , listFieldset , listContainer , select){
         this.alertContainer = alertContainer;
+        this.listFieldset = listFieldset;
         this.listContainer = listContainer;
         this.select = select;
         this.playlistId = null;
@@ -498,7 +520,9 @@
                                 let songs = JSON.parse(request.responseText);
 
                                 if(songs.length == 0){
-                                    self.alertContainer.textContent = "All songs already in this playlist";
+                                	console.log("Hiding the fieldSet for insert a song in the playList");
+                                	self.listFieldset.style.display = "none";
+                                    self.alertContainer.textContent = "All songs already in this playList";
                                     return;
                                 }
                                 self.update(songs);
@@ -534,6 +558,7 @@
                 option.appendChild(document.createTextNode(songToShow.songTitle));
                 self.select.appendChild(option);
             });
+            this.listFieldset.style.display = "";
             this.listContainer.style.display = "";
         }
     }
@@ -716,15 +741,15 @@
 
             //Initialize the playlist table
             playlistList = new PlaylistList(playlistTableError , document.getElementById("playlistTable") ,
-                                            document.getElementById("playlistTableBody"));
+                                        document.getElementById("playlistTableBody"));
 
             //Initialize the songs in the playList
             songsInPlayList = new SongsInPlaylist(songInPlaylistError , document.getElementById("songTable") ,
-                                            document.getElementById("songTableBody"));
+                                        document.getElementById("songTableBody"));
 
             //Initialize songs not in the playlist
-            songsNotInPlayList = new SongsNotInPlaylist(document.getElementById("addSongMessage") ,
-                document.getElementById("addSongToPlaylistDiv") , document.getElementById("addSongToPlayList"));
+            songsNotInPlayList = new SongsNotInPlaylist(document.getElementById("addSongMessage") , document.getElementById("addSongToPlaylistFieldset") ,
+                						document.getElementById("addSongToPlaylistDiv") , document.getElementById("addSongToPlayList"));
 
             //Initialize the songDetails
             songDetails = new SongDetails(document.getElementById("songDetailsMessage") ,
@@ -784,6 +809,11 @@
         	document.getElementById("goToSortingPageButton").style.display = "none";
         	document.getElementById("homePage").style.display = "none";
         	document.getElementById("goToMainPageButton").style.display = "";
+        	
+        	playListMessage.reset();
+        	document.getElementById("playlistToOrder").textContent = "Play list name: " + playListMessage.playlistName;
+        	document.getElementById("playlistToOrder").style.display = "";
+        	
         	sortingList.show();
         }
         
@@ -795,6 +825,10 @@
         	document.getElementById("goToSortingPageButton").style.display = "";
         	document.getElementById("goToMainPageButton").style.display = "none";
         	document.getElementById("homePage").style.display = "";
+        	
+        	playListMessage.show();
+        	document.getElementById("playlistToOrder").style.display = "none";
+        	
         	sortingList.reset();
         }
         

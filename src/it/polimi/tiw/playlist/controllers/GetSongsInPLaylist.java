@@ -131,34 +131,7 @@ public class GetSongsInPLaylist extends HttpServlet{
 			int numberOfSongs = songsInPlaylist.size();
 			
 			System.out.println("Number of songs is " +  numberOfSongs);
-			//Send this with an other servlet
-			//ArrayList<SongDetails> songsNotInPlaylist = sDao.getSongsNotInPlaylist(id , user.getId());
-			//String title = pDao.findPlayListTitleById(id);
-			
-			/*Done in the view
-			boolean next = false;
-			
-			if(block * 5 + 5 > songsInPlaylist.size()) {
-				block = (songsInPlaylist.size() / 5);
-			}
-			if((block * 5 + 5) < songsInPlaylist.size()) {
-				next = true;
-			}
-			
-			//Save only the songs in the current block (max 5 songs)
-			ArrayList<SongDetails> songs = new ArrayList<SongDetails>();
-			
-			if(songsInPlaylist.size() > 0) {
-				for(int i = (block * 5) ; i < (block * 5 + 5) && i < songsInPlaylist.size(); i++){
-					SongDetails song = songsInPlaylist.get(i);
-					songs.add(song);
-				}	
-			}*/
-			
-			/*Now the view has the playlist id 
-			Playlist p = new Playlist();
-			p.setId(id);
-			p.setTitle(title);*/
+
 			
 			//Send all the song of the playList
 			JSONArray jArray = new JSONArray();

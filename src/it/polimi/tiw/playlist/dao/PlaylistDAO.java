@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 import it.polimi.tiw.playlist.beans.Playlist;
+import it.polimi.tiw.playlist.utils.FromJsonToArray;
 
 public class PlaylistDAO {
 	private Connection connection;
@@ -346,8 +347,6 @@ public class PlaylistDAO {
 		String jSon = null;
 		
 		ArrayList<Integer> sortedArray = new ArrayList<Integer>();
-		int num = 0;
-		boolean wasNumber = false;
 		
 		
 		try {
@@ -361,22 +360,8 @@ public class PlaylistDAO {
 			
 			if(jSon == null)
 				return null;
-			//Convert the jSon into an array of integer
-			for(int i = 4 ; i < jSon.length() ; i++) {
-				System.out.println("Processing character " + jSon.charAt(i));
-				//92 is the "\" character
-				if(jSon.charAt(i) == '[' || jSon.charAt(i) == ']' || jSon.charAt(i) == 92 || jSon.charAt(i) == ',' || jSon.charAt(i) == '"') {
-					if(wasNumber) {
-						System.out.println("Added number: " + num);
-						sortedArray.add(num);
-						num = 0;
-						wasNumber = false;
-					}
-					continue;
-				}
-				num = num * 10 + (jSon.charAt(i) - 48);
-				wasNumber = true;
-			}
+			
+			sortedArray = FromJsonToArray.fromJsonToArrayList(jSon);
 			
 		}catch(SQLException e) {
 			throw new SQLException();
