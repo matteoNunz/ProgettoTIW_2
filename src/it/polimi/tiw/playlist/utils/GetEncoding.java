@@ -15,6 +15,15 @@ import it.polimi.tiw.playlist.dao.SongDAO;
 
 public class GetEncoding {
 	
+	/**
+	 * Static method that take from the local storage the image and encode it into a base64 string
+	 * @param fileName is the name of the image file
+	 * @param context is the context
+	 * @param connection is a connection with the data base
+	 * @param user is the user who is doing the request
+	 * @return a string containing the base64 encoding of the image
+	 * @throws IOException
+	 */
 	public static String getImageEncoding(String fileName , ServletContext context , Connection connection , User user) throws IOException {
 		
 		System.out.println("GetImage called, name of the song: " + fileName);
@@ -37,7 +46,7 @@ public class GetEncoding {
 			return null;
 		}
 		
-		System.out.println("Processing the base64 encoding for the image");
+		//System.out.println("Processing the base64 encoding for the image");
 		
 		//Take the byte array of the image
 		byte[] fileContent = FileUtils.readFileToByteArray(file);
@@ -49,7 +58,16 @@ public class GetEncoding {
 		
 		return encodedString;
 	}
-	
+
+	/**
+	 * Static method that take from the local storage the song and encode it into a base64 string
+	 * @param fileName is the name of the song file
+	 * @param context is the context
+	 * @param connection is a connection with the data base
+	 * @param user is the user who is doing the request
+	 * @return a string containing the base64 encoding of the image
+	 * @throws IOException
+	 */
 	public static String getSongEncoding(String fileName , ServletContext context , Connection connection , User user) throws IOException {
 		
 		System.out.println("GetSong called, name of the song: " + fileName);
@@ -72,7 +90,7 @@ public class GetEncoding {
 			return null;
 		}
 		
-		System.out.println("Processing the base64 encoding for the song");
+		//System.out.println("Processing the base64 encoding for the song");
 		
 		//Take the byte array of the image
 		byte[] fileContent = FileUtils.readFileToByteArray(file);

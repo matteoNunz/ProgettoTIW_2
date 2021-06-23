@@ -110,7 +110,7 @@ public class AddSorting extends HttpServlet {
 			}
 		}
 		
-		//System.out.println("SortedArray after dublicate check is: " + sortedArray.toString());
+		//System.out.println("SortedArray after duplicate check is: " + sortedArray.toString());
 		
 		//verify if each song id belongs to the user
 		for(Integer id : sortedArray) {

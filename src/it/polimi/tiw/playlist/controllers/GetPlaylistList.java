@@ -2,7 +2,6 @@ package it.polimi.tiw.playlist.controllers;
 
 import java.io.IOException;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
@@ -14,11 +13,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-
-import org.thymeleaf.TemplateEngine;
-import org.thymeleaf.context.WebContext;
-import org.thymeleaf.templatemode.TemplateMode;
-import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -50,24 +44,11 @@ public class GetPlaylistList extends HttpServlet {
 		HttpSession s = request.getSession();
 		User user = (User) s.getAttribute("user");
 		ArrayList<Playlist> playlists = null;
-		String error = "";
-		String error1 = "";
-		String error2 = "";
 		
 		System.out.println("Getting the playlist list");
 		
 		PlaylistDAO pDao = new PlaylistDAO(connection);
-		
-		//!!!!!!!!!!!!Maybe useless!!!!!!!!!!!!!!!!!!!
-		//In case of forward from CreatePlaylist , CreateSong and GoToPlayistPage 
-		if(((String) request.getAttribute("error")) != null) 
-			error = (String) request.getAttribute("error");
-		else if(((String) request.getAttribute("error1")) != null) 
-			error1 = (String) request.getAttribute("error1");
-		else if(((String) request.getAttribute("error2")) != null) //from GoToPlaylistPage
-			error2 = (String) request.getAttribute("error2");
-		
-		
+				
 		try {
 			playlists = pDao.findPlaylist(user.getId());
 		}catch(SQLException e) {

@@ -1,4 +1,4 @@
-package it.polimi.tiw.playlist.controllers;
+/*package it.polimi.tiw.playlist.controllers;
 
 import java.io.File;
 import java.io.IOException;
@@ -117,4 +117,4 @@ public class GetImage extends HttpServlet{
 			e.printStackTrace();
 		}
 	}
-}
+}*/

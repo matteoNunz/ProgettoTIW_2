@@ -45,7 +45,6 @@ public class GetSongsNotInPlaylist extends HttpServlet{
 		//Take the playList id
 		String playlistId = request.getParameter("playlistId");
 		String error = "";
-		String error1 = "";
 		int id = -1;
 		
 		System.out.println("Getting songs not in playlist " + playlistId);
@@ -87,13 +86,9 @@ public class GetSongsNotInPlaylist extends HttpServlet{
 		
 		//The user created this playList
 		
-		//to take songs in and not in the specified playList
+		//to take songs not in the specified playList
 		SongDAO sDao = new SongDAO(connection);
 		
-		//To take the title of the playList
-		//PlaylistDAO pDao = new PlaylistDAO(connection);
-		
-		//Take the titles and the image paths
 		try {
 			
 			ArrayList<SongDetails> songsNotInPlaylist = sDao.getSongsNotInPlaylist(id , user.getId());
@@ -101,27 +96,6 @@ public class GetSongsNotInPlaylist extends HttpServlet{
 			int numberOfSongs = songsNotInPlaylist.size();
 			
 			System.out.println("Number of songs is " +  numberOfSongs);
-			
-			//Send all the song of the playList
-			/*JSONArray jArray = new JSONArray();
-			JSONObject jSonObject;
-			
-			
-			for(SongDetails song : songsInPlaylist) {
-				System.out.println("Title: " + song.getSongTitle());
-				
-				//Here to reset the attribute for each song
-				jSonObject = new JSONObject();
-				
-				jSonObject.put("songId", song.getId());
-				jSonObject.put("songTitle" , song.getSongTitle());
-				jSonObject.put("fileName" , song.getImgFile());
-				
-				jArray.put(jSonObject);
-			}
-			
-			System.out.println("Prining jArray: ");
-			System.out.println(jArray.toString());*/
 			
 			//Create the jSon with the answer
 			Gson gSon = new GsonBuilder().create();

@@ -9,6 +9,12 @@ import javax.servlet.UnavailableException;
 
 public class ConnectionHandler {
 
+	/**
+	 * Static method that create a connection with the DB and return it
+	 * @param context is the context
+	 * @return a new connection with the data base
+	 * @throws UnavailableException
+	 */
 	public static Connection getConnection(ServletContext context) throws UnavailableException {
 		Connection connection = null;
 		try {

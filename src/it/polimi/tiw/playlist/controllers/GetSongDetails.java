@@ -18,9 +18,6 @@ import org.apache.commons.lang.StringEscapeUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
 import it.polimi.tiw.playlist.beans.SongDetails;
 import it.polimi.tiw.playlist.beans.User;
 import it.polimi.tiw.playlist.dao.PlaylistDAO;
@@ -120,13 +117,6 @@ public class GetSongDetails extends HttpServlet{
 			}catch(IOException e) {
 				jSonObject.put("base64String" , "");
 			}
-			
-			//Create the jSon with the answer
-			/*Gson gSon = new GsonBuilder().create();
-			String jSon = gSon.toJson(song);
-			
-			System.out.println("Printing the jSon with all the song not in the playlist");
-			System.out.println(jSon.toString());*/
 			
 			response.setStatus(HttpServletResponse.SC_OK);//Code 200
 			response.setContentType("application/json");

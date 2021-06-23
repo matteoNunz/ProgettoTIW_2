@@ -18,9 +18,9 @@ public class PlaylistDAO {
 	}
 	
 	/**
-	 * Method that create a list of playlist of the user
+	 * Method that create a list of playList of the user
 	 * @param userId is the id of the user
-	 * @return an ArrayList of playlist created by the user
+	 * @return an ArrayList of playList created by the user
 	 * @throws SQLException 
 	 */
 	public ArrayList<Playlist> findPlaylist(int userId) throws SQLException{
@@ -305,7 +305,7 @@ public class PlaylistDAO {
 	/**
 	 * Method that inserts a new sorting of the playList in the playList table in the data base
 	 * @param pId is the id of the playList
-	 * @param jsonSorting is a string containing a json with song ids in the new order
+	 * @param jsonSorting is a string containing a jSon with song IDs in the new order
 	 * @return true if everything went good , false otherwise
 	 * @throws SQLException
 	 */

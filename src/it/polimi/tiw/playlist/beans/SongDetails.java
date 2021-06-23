@@ -6,8 +6,8 @@ public class SongDetails{
 	private String albumTitle;
 	private String singer;
 	private String kindOf;
-	private String songFile;//where is the music file
-	private String imgFile;
+	private String songFile;//The name of the song file stored
+	private String imgFile;//The name of the image file stored
 	private int publicationYear;
 
 	
@@ -53,7 +53,7 @@ public class SongDetails{
 	
 	/**
 	 * 
-	 * @return the path of the music file
+	 * @return the name of the music file
 	 */
 	public String getSongFile() {
 		return songFile;
@@ -61,7 +61,7 @@ public class SongDetails{
 	
 	/**
 	 * 
-	 * @return the path of the image
+	 * @return the name of the image file
 	 */
 	public String getImgFile() {
 		return imgFile;
@@ -85,51 +85,51 @@ public class SongDetails{
 	
 	/**
 	 * Set the SongTitle
-	 * @param newSongTitle is the new title of the song
+	 * @param songTitle is the title of the song
 	 */
-	public void setSongTitle(String newSongTitle) {
-		this.songTitle = newSongTitle;
+	public void setSongTitle(String songTitle) {
+		this.songTitle = songTitle;
 	}
 	
 	/**
 	 * Set the title of the album that contains the song
-	 * @param newAlbumTitle
+	 * @param albumTitle is the album title
 	 */
-	public void setAlbumTitle(String newAlbumTitle) {
-		this.albumTitle = newAlbumTitle;
+	public void setAlbumTitle(String albumTitle) {
+		this.albumTitle = albumTitle;
 	}
 	
 	
 	/**
 	 * Set the name of singer
-	 * @param newSinger is the new name
+	 * @param singer is the name of the singer
 	 */
-	public void setSinger(String newSinger) {
-		this.singer = newSinger;
+	public void setSinger(String singer) {
+		this.singer = singer;
 	}
 	
 	/**
 	 * Set the kind of the song
 	 * @param newKindOf is the new type
 	 */
-	public void setKindOf(String newKindOf) {
-		this.kindOf = newKindOf;
+	public void setKindOf(String kindOf) {
+		this.kindOf = kindOf;
 	}
 	
 	/**
-	 * Set the position of the file
-	 * @param newFile is the position where the file is stored
+	 * Set the name of the song file
+	 * @param songFile is the name of the file stored
 	 */
-	public void setFile(String newFile) {
-		this.songFile = newFile;
+	public void setFile(String songFile) {
+		this.songFile = songFile;
 	}
 	
 	/**
-	 * Set the position of the image
-	 * @param newFile is the position where the song is stored
+	 * Set the name of the image
+	 * @param imgFile is the name of the song is stored
 	 */
-	public void setImgFile(String newFile) {
-		this.imgFile = newFile;
+	public void setImgFile(String imgFile) {
+		this.imgFile = imgFile;
 	}
 	
 	/**
