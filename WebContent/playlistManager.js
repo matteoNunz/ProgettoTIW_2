@@ -1,7 +1,4 @@
-{
-
-	//TODO: add method resetError that reset the errors every time there is an action
-	
+{	
     //Page components
     var playlistList;
     var songsInPlayList;
@@ -57,10 +54,6 @@
         if(sessionStorage.getItem("userName") == null){
             window.location.href = "login.html";
         }else{
-        
-    		(function() {
-
-        	})();
             pageOrchestrator.start();
             pageOrchestrator.refresh();
         }
@@ -111,7 +104,7 @@
         this.messageContainer = messageContainer;
 
         this.show = function() {
-            this.messageContainer.textContent = this.playlistName;
+            this.messageContainer.textContent = "PlayList: " + this.playlistName;
             this.messageContainer.style.display = "";
         }
 
@@ -154,15 +147,29 @@
             //Ask the playList table to the server
             makeCall("GET" , "GetPlaylistList" , null ,
                 function(request) {
-                	self.alertContainer.textContent = "";
                     if(request.readyState == XMLHttpRequest.DONE){
+                    	pageOrchestrator.resetErrors();
+                    
                         switch(request.status){
                             case 200:
                                 let playlistsToShow = JSON.parse(request.responseText);
+                                
                                 if(playlistsToShow.length == 0){
-                                    self.alertContainer.textContent = "No playlist yet";
+                                    document.getElementById("playListTableMessage").textContent = "No playList yet";
+                                    self.listContainer.style.display = "none";
+                                    
+                                    document.getElementById("goToSortingPageButton").style.display = "none";
+                                	handleButtons.hideNext();
+						        	handleButtons.hideBefore();
+						        	playlistList.reset();
+						        	songsInPlayList.reset();
+						        	songsNotInPlayList.reset();
+						        	songDetails.reset();
+						        	
+						        	playListMessage.reset();
                                     return;
                                 }
+                                document.getElementById("playListTableMessage").textContent = "";
                                 self.alertContainer.textContent = "";
                                 self.update(playlistsToShow);
                                 //Simulate a click with autoClick function
@@ -287,7 +294,8 @@
             makeCall("GET" , "GetSongsInPlaylist?playlistId=" + playlistId , null ,
                 function(request) {
                     if(request.readyState == XMLHttpRequest.DONE){
-                    	self.alertContainer.textContent = "";
+                    	pageOrchestrator.resetErrors();
+                    	
                         switch(request.status){
                             case 200:
                                 let songsReceived = JSON.parse(request.responseText);
@@ -309,10 +317,10 @@
             						handleButtons.hideBefore();
             						handleButtons.hideNext();
             						songDetails.reset();
-                                    self.alertContainer.textContent = "No songs yet";
+                                    document.getElementById("songTableMessage").textContent = "No songs yet";
                                     return;
                                 }
-
+								document.getElementById("songTableMessage").textContent = "";
                                 self.songs = songsReceived;
                                 
                                 
@@ -514,7 +522,8 @@
             makeCall("GET" , "GetSongsNotInPlaylist?playlistId=" + playlistId , null ,
                 function(request) {
                     if(request.readyState == XMLHttpRequest.DONE){
-                        self.alertContainer.textContent = "";
+                        pageOrchestrator.resetErrors();
+                        
                         switch(request.status){
                             case 200:
                                 let songs = JSON.parse(request.responseText);
@@ -522,9 +531,10 @@
                                 if(songs.length == 0){
                                 	console.log("Hiding the fieldSet for insert a song in the playList");
                                 	self.listFieldset.style.display = "none";
-                                    self.alertContainer.textContent = "All songs already in this playList";
+                                   	document.getElementById("addSongMessage").textContent = "All songs already in this playList";
                                     return;
                                 }
+                                document.getElementById("addSongMessage").textContent = "";
                                 self.update(songs);
                                 break;
 
@@ -593,6 +603,8 @@
             makeCall("GET" , "GetSongDetails?songId=" + this.songId + "&playlistId=" + this.playlistId , null ,
                 function(request) {
                     if(request.readyState == XMLHttpRequest.DONE){
+                    	pageOrchestrator.resetErrors();
+                    	
                         switch(request.status){
                             case 200:
                                 let songDetails = JSON.parse(request.responseText);
@@ -739,20 +751,20 @@
 
             playListMessage = new PlaylistMessage(document.getElementById("playlistNameMessage"));
 
-            //Initialize the playlist table
-            playlistList = new PlaylistList(playlistTableError , document.getElementById("playlistTable") ,
-                                        document.getElementById("playlistTableBody"));
+            //Initialize the playList table
+            playlistList = new PlaylistList(document.getElementById("playlistTableError") , 
+            							document.getElementById("playlistTable") , document.getElementById("playlistTableBody"));
 
             //Initialize the songs in the playList
-            songsInPlayList = new SongsInPlaylist(songInPlaylistError , document.getElementById("songTable") ,
-                                        document.getElementById("songTableBody"));
+            songsInPlayList = new SongsInPlaylist(document.getElementById("songTableError") , 
+            							document.getElementById("songTable") , document.getElementById("songTableBody"));
 
             //Initialize songs not in the playlist
-            songsNotInPlayList = new SongsNotInPlaylist(document.getElementById("addSongMessage") , document.getElementById("addSongToPlaylistFieldset") ,
+            songsNotInPlayList = new SongsNotInPlaylist(document.getElementById("addSongError") , document.getElementById("addSongToPlaylistFieldset") ,
                 						document.getElementById("addSongToPlaylistDiv") , document.getElementById("addSongToPlayList"));
 
             //Initialize the songDetails
-            songDetails = new SongDetails(document.getElementById("songDetailsMessage") ,
+            songDetails = new SongDetails(document.getElementById("songDetailsError") ,
                                         document.getElementById("songPage") , document.getElementById("songDetailsTableBody"));
 
             //Initialize the sortingList
@@ -767,36 +779,35 @@
             });
             //Add listeners to 'before' and 'next' buttons
             document.getElementById("beforeButton").addEventListener("click" , () => {
+            	pageOrchestrator.resetErrors();
     			songsInPlayList.update(songsInPlayList.section - 1);
     		});
         	document.getElementById("nextButton").addEventListener("click" , () => {
+        		pageOrchestrator.resetErrors();
     			songsInPlayList.update(songsInPlayList.section + 1);
     		});
     		//Add the listener for the button to reorganized the playList
     		document.getElementById("goToSortingPageButton").addEventListener("click" , () => {
+    			pageOrchestrator.resetErrors();
     			pageOrchestrator.showSortingPage();
     		});
     		//Add the listener for the button to reorganized the playList
     		document.getElementById("goToMainPageButton").addEventListener("click" , () => {
+    			pageOrchestrator.resetErrors();
     			pageOrchestrator.showMainPage();
     		});
         }
 
         this.refresh = function(playlistId) {
             //Reset the errors
-            playlistTableError.textContent = "";
-            songInPlaylistError.textContent = "";
-            document.getElementById("addSongMessage").textContent = "";
-            document.getElementById("songDetailsMessage").textContent = "";
-
-            //Show the playLists and show the song of a playlist(the first one or the one specified by the id)
-            //That implies the invocation of songsNotInPlaylist.show(playlistId)
+            console.log("pageOrchestrator.refresh() called");
+            
+			this.resetErrors();
+			
+			//Show a playList
             playlistList.show( function() {
                 playlistList.autoClick(playlistId);
             });
-
-            //Reset the playlistList
-            //playlistList.reset();
         }
         
         this.showSortingPage = function() {
@@ -830,6 +841,17 @@
         	document.getElementById("playlistToOrder").style.display = "none";
         	
         	sortingList.reset();
+        }
+        
+        this.resetErrors = function() {
+        	console.log("ResetErrors called!");
+        	document.getElementById("playlistTableError").textContent = "";
+        	document.getElementById("createPlaylistError").textContent = "";
+        	document.getElementById("songError").textContent = "";
+        	document.getElementById("songTableError").textContent = "";
+        	document.getElementById("addSongError").textContent = "";
+        	document.getElementById("songDetailsError").textContent = "";
+        	document.getElementById("sortingError").textContent = "";
         }
         
     }

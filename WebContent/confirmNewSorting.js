@@ -26,8 +26,8 @@
 
                 if(request.readyState == XMLHttpRequest.DONE){
 
-                    //Reset the error
-                    document.getElementById("sortingError").textContent = "";
+                    //Reset the errors
+                    pageOrchestrator.resetErrors();
 
                     switch(request.status){
                         case 200:

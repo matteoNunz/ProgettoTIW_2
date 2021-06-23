@@ -1,12 +1,9 @@
 package it.polimi.tiw.playlist.controllers;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Base64;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -35,11 +32,9 @@ public class GetSongsInPLaylist extends HttpServlet{
 	
 	private static final long serialVersionUID = 1L;
 	private Connection connection;
-	private String folderPath = "";
 
 	public void init() {
 		ServletContext context = getServletContext();
-		folderPath = getServletContext().getInitParameter("albumImgPath");
 		
 		try {
 			connection = ConnectionHandler.getConnection(context);
@@ -53,7 +48,6 @@ public class GetSongsInPLaylist extends HttpServlet{
 		String playlistId = request.getParameter("playlistId");
 		String section = request.getParameter("section");//Which songs need to be shown
 		String error = "";
-		String error1 = "";
 		int id = -1;
 		int block = 0;
 		
@@ -103,15 +97,6 @@ public class GetSongsInPLaylist extends HttpServlet{
 		}
 		
 		//The user created this playList
-		
-		//Take the error in case of forward from AddSong
-		if(request.getAttribute("error") != null) {
-			error += (String) request.getAttribute("error");
-		}
-		//Take the error in case of forward from GoToSongPage
-		else if(request.getAttribute("error2") != null) {
-			error1 += (String) request.getAttribute("error2");
-		}
 		
 		//to take songs in and not in the specified playList
 		SongDAO sDao = new SongDAO(connection);

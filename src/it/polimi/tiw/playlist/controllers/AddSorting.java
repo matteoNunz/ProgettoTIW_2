@@ -97,6 +97,21 @@ public class AddSorting extends HttpServlet {
 		ArrayList<Integer> sortedArray = FromJsonToArray.fromJsonToArrayList(newSorting);
 		SongDAO sDao = new SongDAO(connection);
 		
+		int currentNumber = -1;
+		
+		//Delete duplicate of the same song
+		for(int i = 0 ; i < sortedArray.size() ; i++) {
+			currentNumber = sortedArray.get(i);
+			for(int j = i + 1 ; j < sortedArray.size() ; j++) {
+				if(sortedArray.get(j) == currentNumber) {
+					//System.out.println("Removing element: " + sortedArray.get(j) + " in position " + j);
+					sortedArray.remove(j);
+				}
+			}
+		}
+		
+		//System.out.println("SortedArray after dublicate check is: " + sortedArray.toString());
+		
 		//verify if each song id belongs to the user
 		for(Integer id : sortedArray) {
 			try {

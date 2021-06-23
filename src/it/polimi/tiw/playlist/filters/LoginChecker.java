@@ -24,8 +24,8 @@ public class LoginChecker implements Filter {
 
 		HttpServletRequest req = (HttpServletRequest) request;
 		HttpServletResponse res = (HttpServletResponse) response;
-		String loginpath = req.getServletContext().getContextPath() + "/login.html";
-
+		String loginpath = "login.html";
+		
 		HttpSession s = req.getSession();
 		if (s.isNew() || s.getAttribute("user") == null) {
 			res.setStatus(HttpServletResponse.SC_FORBIDDEN);//Code 403

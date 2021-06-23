@@ -105,13 +105,5 @@
             //Mark all rows in "not selected" class to reset previous dragOver
             unselectRows(rows);
         }
-
-        /**
-         * Function that will send the final sorting to the server and, when the answer arrived, turn back to
-         * the standard home page, showing the playlist with the new ordering
-         */
-        function sendSorting() {
-
-        }
     }
 }

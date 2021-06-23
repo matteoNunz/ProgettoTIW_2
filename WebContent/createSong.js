@@ -13,7 +13,7 @@
        let form = e.target.closest("form");
 
        //Reset the error
-        document.getElementById("songError").textContent = null;
+        pageOrchestrator.resetErrors();
 
         if(form.checkValidity()){
             //TODO check the input fields

@@ -61,6 +61,8 @@ public class CheckLogin extends HttpServlet{
 			if(user != null) {
 				//Set the session and send the userName back
 				request.getSession().setAttribute("user", user);
+				//To reduce the session time
+				//request.getSession().setMaxInactiveInterval(1);
 				response.setStatus(HttpServletResponse.SC_OK);//Code 200
 				response.setContentType("application/json");
 				response.setCharacterEncoding("UTF-8");

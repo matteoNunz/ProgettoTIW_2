@@ -71,7 +71,7 @@ body {
 .homePage {
 	float: left;
 	margin-left: 5%;
-	text-align: left;
+	text-align: center;
 }
 
 .playlistPage {
@@ -114,5 +114,6 @@ body {
 	position: relative;
 	margin: 0% 0% 0% 12%;
 }
+
 
 

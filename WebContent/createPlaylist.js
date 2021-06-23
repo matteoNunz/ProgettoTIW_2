@@ -12,8 +12,6 @@
 
         //Take the closest form
         let form = e.target.closest("form");
-        //Reset the error
-        document.getElementById("createPlaylistError").textContent = null;
 
         if(form.checkValidity()){
             //Make the call to the server
@@ -22,9 +20,11 @@
                     console.log("CallBack function called");
 
                     if(x.readyState == XMLHttpRequest.DONE){
+                    pageOrchestrator.resetErrors();
+                    
                         switch (x.status){
                             case 200:
-                                //Update the playlist list -> maybe use directly the pageOrchestrator
+                                //Update the playList list -> maybe use directly the pageOrchestrator
                                 playlistList.show();
                                 break;
 

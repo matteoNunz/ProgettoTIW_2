@@ -23,6 +23,8 @@
                     console.log("CallBack function called");
 
                     if(request.readyState == XMLHttpRequest.DONE){
+                    	pageOrchestrator.resetErrors();
+                    	
                         switch(request.status){
                             case 200:
                                 //Update the view
