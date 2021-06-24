@@ -372,7 +372,7 @@ public class SongDAO {
 	 * @return true if the song belongs, false otherwise
 	 * @throws SQLException
 	 */
-	public boolean findSongByUser(String imageName , int userId) throws SQLException{
+	public boolean findImageByUser(String imageName , int userId) throws SQLException{
 		String query = "SELECT * FROM song JOIN album WHERE album.Image = ? AND song.IdUser = ?";
 		boolean result = false;
 		PreparedStatement pStatement = null;

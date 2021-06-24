@@ -1,5 +1,5 @@
 /**
- * Create a new playlist
+ * Create a new playList
  */
 
 /**
@@ -8,7 +8,7 @@
 (function() {
     document.getElementById("createPlaylistButton").addEventListener("click" , (e) => {
 
-        console.log("Creating a new playlist!");
+        console.log("Creating a new playList!");
 
         //Take the closest form
         let form = e.target.closest("form");

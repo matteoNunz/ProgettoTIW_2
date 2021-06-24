@@ -235,7 +235,7 @@ public class CreateSong extends HttpServlet{
 				file = new File(outputPathImg);
 				file.delete();
 
-				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);//Code 400	
+				response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);//Code 500	
 				response.getWriter().println("Impossible upload file in the database , try later");
 			}
 			
