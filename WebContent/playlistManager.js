@@ -228,7 +228,7 @@
                     let targetRow = e.target.closest("tr");//Row of the event
                     //let targetTitles = targetRow.selectAllChildren("td");//Take all the td in this row
                     //let targetTitles = targetRow.childNodes;
-                    let targetTitles = targetRow.getElementsByTagName("a")
+                    let targetTitles = targetRow.getElementsByTagName("a");
                     let targetTitle = targetTitles[0].innerHTML;//Tale the first td -> the title
                     playListMessage.setPlayListName(targetTitle);
                 });
