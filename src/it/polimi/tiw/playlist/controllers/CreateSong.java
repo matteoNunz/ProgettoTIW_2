@@ -190,13 +190,22 @@ public class CreateSong extends HttpServlet{
 			return;
 		}
 		
-		//Save the image
-		File fileImg = new File(outputPathImg);
+		//Save the image if it's not present
+		if(!isReplaced) {
+			File fileImg = new File(outputPathImg);
+			
+			try (InputStream fileContent = albumImg.getInputStream()) {
+				Files.copy(fileContent, fileImg.toPath());
+			} catch (Exception e) {
+				error += "Error in uploading the image;";
+			}
+		}
 		
-		try (InputStream fileContent = albumImg.getInputStream()) {
-			Files.copy(fileContent, fileImg.toPath());
-		} catch (Exception e) {
-			error += "Error in uploading the image;";
+		//If an error occurred 
+		if(!error.equals("")) {
+			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);//Code 400	
+			response.getWriter().println(error);
+			return;
 		}
 		
 		//Save the mp3 file
@@ -208,7 +217,7 @@ public class CreateSong extends HttpServlet{
 			error += "Error in uploading the music file;\n";
 		}
 		
-		//If an error occurred, redirect with errorMsg1 to the template engine  
+		//If an error occurred 
 		if(!error.equals("")) {
 			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);//Code 400	
 			response.getWriter().println(error);

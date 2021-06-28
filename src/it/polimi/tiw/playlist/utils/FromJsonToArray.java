@@ -14,6 +14,8 @@ public class FromJsonToArray {
 		ArrayList<Integer> sortedArray = new ArrayList<Integer>();
 		int num = 0;
 		boolean wasNumber = false;
+		boolean invalidNumber = false;
+		char charLetto = ' ';
 		
 		//Convert the jSon into an array of integer
 		for(int i = 1 ; i < jSon.length() ; i++) {
@@ -21,7 +23,14 @@ public class FromJsonToArray {
 			//92 is the "\" character
 			if(jSon.charAt(i) == '[' || jSon.charAt(i) == ']' || jSon.charAt(i) == 92 || jSon.charAt(i) == ',' 
 									 || jSon.charAt(i) == '"' || jSon.charAt(i) == ' ') {
-				if(wasNumber) {
+				if(invalidNumber) {
+					System.out.println("Invalid number found");
+					//Don't add the number in the array and reset the variables
+					num = 0;
+					wasNumber = false;
+					invalidNumber = false;
+				}
+				else if(wasNumber) {
 					System.out.println("Added number: " + num);
 					sortedArray.add(num);
 					num = 0;
@@ -29,7 +38,12 @@ public class FromJsonToArray {
 				}
 				continue;
 			}
-			num = num * 10 + (jSon.charAt(i) - 48);
+			charLetto = jSon.charAt(i);
+			//Check if the char read is a number
+			if(charLetto < 48 && charLetto > 57) {
+				invalidNumber = true;
+			}
+			num = num * 10 + (charLetto - 48);
 			wasNumber = true;
 		}
 		return sortedArray;
