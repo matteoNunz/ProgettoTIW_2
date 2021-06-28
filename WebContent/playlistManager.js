@@ -313,6 +313,8 @@
         
                                 if(songsReceived.length == 0){
                                     //Empty the body of the table
+                                    console.log("Hiding the song table");
+                                    self.listContainer.style.display = "none";
             						self.listBodyContainer.innerHTML = "";
             						handleButtons.hideBefore();
             						handleButtons.hideNext();
