@@ -11,7 +11,7 @@ public class ConnectionHandler {
 
 	/**
 	 * Static method that create a connection with the DB and return it
-	 * @param context is the context
+	 * @param context is the context of the application
 	 * @return a new connection with the data base
 	 * @throws UnavailableException
 	 */

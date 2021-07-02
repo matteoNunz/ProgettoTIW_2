@@ -1,10 +1,6 @@
 /**
  * Registration
  */
-
-/**
- * Function to avoid the global scope
- */
 (function () {
     document.getElementById("registrationButton").addEventListener('click' , (e) => {
 
@@ -16,15 +12,12 @@
 
         //Check the form validity
         if(form.checkValidity()){
-
-			console.log("In check validity");
 			
             //Check the validity of the fields
             let user = document.getElementById("user").value;
             let password = document.getElementById("password").value;
 
             if(user.length > 45 || password.length > 45){
-            	console.log("Values too long");
                 document.getElementById("error").textContent = "username e/o password too long";
                 return;
             }
@@ -34,16 +27,14 @@
                 password.includes("9")) ||
                 !(password.includes("#") || password.includes("@") || password.includes("_")) ||
                 password.length < 4){
-                console.log("Bad format for password");
                 document.getElementById("error").textContent = "Password has to contain at least:4 character,1 number and 1 of the following @,# and _ ";
                 return;
             }
             console.log("Validity ok");
 
             //Make the call to  the server
-            makeCall("POST" , 'Registration' , e.target.closest("form") ,
+            makeCall("POST" , 'Registration' , form ,
                 function (x) {
-                    console.log("CallBack function called");
 
                     if(x.readyState == XMLHttpRequest.DONE){
                         switch(x.status){

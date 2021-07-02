@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.UnavailableException;
+import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -23,6 +24,7 @@ import it.polimi.tiw.playlist.dao.PlaylistDAO;
 import it.polimi.tiw.playlist.utils.ConnectionHandler;
 
 @WebServlet("/GetPlaylistList")
+@MultipartConfig
 public class GetPlaylistList extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
@@ -45,8 +47,6 @@ public class GetPlaylistList extends HttpServlet {
 		User user = (User) s.getAttribute("user");
 		ArrayList<Playlist> playlists = null;
 		
-		System.out.println("Getting the playlist list");
-		
 		PlaylistDAO pDao = new PlaylistDAO(connection);
 				
 		try {
@@ -62,9 +62,6 @@ public class GetPlaylistList extends HttpServlet {
 		//Create the jSon with the answer
 		Gson gSon = new GsonBuilder().setDateFormat("dd-MM-yyyy").create();
 		String jSon = gSon.toJson(playlists);
-		
-		System.out.println("Printing the jSon with all the playlist");
-		System.out.println(jSon.toString());
 		
 		response.setContentType("application/json");
 		response.setCharacterEncoding("UTF-8");

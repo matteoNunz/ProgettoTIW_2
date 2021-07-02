@@ -47,8 +47,6 @@ public class GetSongsNotInPlaylist extends HttpServlet{
 		String error = "";
 		int id = -1;
 		
-		System.out.println("Getting songs not in playlist " + playlistId);
-		
 		HttpSession s = request.getSession();
 		
 		//Take the user
@@ -86,23 +84,16 @@ public class GetSongsNotInPlaylist extends HttpServlet{
 		
 		//The user created this playList
 		
-		//to take songs not in the specified playList
+		//To take songs not in the specified playList
 		SongDAO sDao = new SongDAO(connection);
 		
 		try {
 			
 			ArrayList<SongDetails> songsNotInPlaylist = sDao.getSongsNotInPlaylist(id , user.getId());
 			
-			int numberOfSongs = songsNotInPlaylist.size();
-			
-			System.out.println("Number of songs is " +  numberOfSongs);
-			
 			//Create the jSon with the answer
 			Gson gSon = new GsonBuilder().create();
 			String jSon = gSon.toJson(songsNotInPlaylist);
-			
-			System.out.println("Printing the jSon with all the song not in the playlist");
-			System.out.println(jSon.toString());
 			
 			response.setStatus(HttpServletResponse.SC_OK);//Code 200
 			response.setContentType("application/json");

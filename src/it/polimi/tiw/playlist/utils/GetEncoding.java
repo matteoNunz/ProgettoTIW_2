@@ -26,7 +26,7 @@ public class GetEncoding {
 	 */
 	public static String getImageEncoding(String fileName , ServletContext context , Connection connection , User user) throws IOException {
 		
-		System.out.println("GetImage called, name of the song: " + fileName);
+		//System.out.println("GetImage called, name of the song: " + fileName);
 		
 		String folderPath = context.getInitParameter("albumImgPath");
 		SongDAO sDao = new SongDAO(connection);
@@ -45,8 +45,6 @@ public class GetEncoding {
 		if (!file.exists() || file.isDirectory()) {
 			return null;
 		}
-		
-		//System.out.println("Processing the base64 encoding for the image");
 		
 		//Take the byte array of the image
 		byte[] fileContent = FileUtils.readFileToByteArray(file);
@@ -70,7 +68,7 @@ public class GetEncoding {
 	 */
 	public static String getSongEncoding(String fileName , ServletContext context , Connection connection , User user) throws IOException {
 		
-		System.out.println("GetSong called, name of the song: " + fileName);
+		//System.out.println("GetSong called, name of the song: " + fileName);
 		
 		String folderPath = context.getInitParameter("songFilePath");
 		SongDAO sDao = new SongDAO(connection);
@@ -89,8 +87,6 @@ public class GetEncoding {
 		if (!file.exists() || file.isDirectory()) {
 			return null;
 		}
-		
-		//System.out.println("Processing the base64 encoding for the song");
 		
 		//Take the byte array of the image
 		byte[] fileContent = FileUtils.readFileToByteArray(file);

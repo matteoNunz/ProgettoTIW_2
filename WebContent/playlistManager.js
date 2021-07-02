@@ -5,7 +5,7 @@
     var songsNotInPlayList;
     var songDetails;
     var sortingList;
-    var playListSongsToOrder = new PlayListSongsToOrder();
+    var playListSongsToOrder;
     var handleButtons;
     let personalMessage;
     let playListMessage;
@@ -13,7 +13,6 @@
 
     /**
      * It contains all the song titles and ids of the current playList needed for the sorting
-     * @constructor
      */
     function PlayListSongsToOrder(){
         /**
@@ -33,11 +32,10 @@
         }
 
         /**
-         * FUnction that add a song to the attribute
+         * Function that add a song to the attribute
          * @param song is the song to add
          */
         this.addSong = function(song) {
-        	console.log("Adding a song to playListSongsToOrder");
             this.songs.push(song);
         }
     }
@@ -119,7 +117,7 @@
     }
 
     /**
-     * Function that take the playlist og the user from the data base
+     * Function that take the playlist of the user from the data base
      * @param alertContainer is the container of the error
      * @param listContainer is the table that contains the list
      * @param listBodyContainer is the body of the table
@@ -147,7 +145,9 @@
             //Ask the playList table to the server
             makeCall("GET" , "GetPlaylistList" , null ,
                 function(request) {
+	
                     if(request.readyState == XMLHttpRequest.DONE){
+	
                     	pageOrchestrator.resetErrors();
                     
                         switch(request.status){
@@ -213,7 +213,6 @@
                 playListNameCell.appendChild(anchor);
                 linkText = document.createTextNode(playlist.title);
                 anchor.appendChild(linkText);
-                console.log("Initializing row with playlistId " + playlist.id);
                 anchor.setAttribute("playlistId" , playlist.id);
                 
                 anchor.addEventListener("click" , (e) => {
@@ -224,24 +223,19 @@
                     //Show songs not in the playList selected
                     songsNotInPlayList.show(e.target.getAttribute("playlistId"));
                     //Show the title
-                    //TODO to verify
                     let targetRow = e.target.closest("tr");//Row of the event
-                    //let targetTitles = targetRow.selectAllChildren("td");//Take all the td in this row
-                    //let targetTitles = targetRow.childNodes;
                     let targetTitles = targetRow.getElementsByTagName("a");
-                    let targetTitle = targetTitles[0].innerHTML;//Tale the first td -> the title
+                    let targetTitle = targetTitles[0].innerHTML;//Take the first td -> the title
                     playListMessage.setPlayListName(targetTitle);
                 });
                 //Disable the href of the anchor
                 anchor.href = "#";
-                
-                //playListNameCell.textContent = playlist.title;
+
                 row.appendChild(playListNameCell);
 
                 //Create the creation date cell
                 creationDateCell = document.createElement("td");
                 creationDateCell.textContent = playlist.creationDate;
-                //creationDateCell.appendData(playlist.creationDate);
                 row.appendChild(creationDateCell);
 
                 self.listBodyContainer.appendChild(row);
@@ -259,7 +253,7 @@
                 document.querySelector(selector) :
                 self.listBodyContainer.querySelectorAll("a")[0];           
    
-            console.log("AutoClick select playlist with id: " + anchorToClick.getAttribute("playlistId"));
+            //console.log("AutoClick select playlist with id: " + anchorToClick.getAttribute("playlistId"));
 
             if(anchorToClick){
                 anchorToClick.dispatchEvent(e);
@@ -294,26 +288,23 @@
             makeCall("GET" , "GetSongsInPlaylist?playlistId=" + playlistId , null ,
                 function(request) {
                     if(request.readyState == XMLHttpRequest.DONE){
+	
                     	pageOrchestrator.resetErrors();
                     	
                         switch(request.status){
                             case 200:
                                 let songsReceived = JSON.parse(request.responseText);
         						
-        						console.log("Showing songsReceived length: " + songsReceived.length);
         						if(songsReceived.length > 1){
                                 	document.getElementById("goToSortingPageButton").style.display = "";
-                                	console.log("Showing the go to sorting page button");
                                 }
                                 else{
                                 	document.getElementById("goToSortingPageButton").style.display = "none";
-                                	console.log("Hiding the go to sorting page button");
                                 }
         
         
                                 if(songsReceived.length == 0){
                                     //Empty the body of the table
-                                    console.log("Hiding the song table");
                                     self.listContainer.style.display = "none";
             						self.listBodyContainer.innerHTML = "";
             						handleButtons.hideBefore();
@@ -371,12 +362,6 @@
             let self = this;
             //Empty the body of the table
             this.listBodyContainer.innerHTML = "";
-            
-                        
-            //TODO now here, in future there will be a button to do that
-            //sortingList.show();
-            //console.log("CALLED THE SHOW METHOD OF SORTING_LIST");
-            //console.log("Number of songs in the playListToOrder is: " + playListSongsToOrder.songs.length);
 
             let next = false;
 
@@ -386,7 +371,7 @@
             }
             if (section * 5 + 5 > this.songs.length) {
                 section = (this.songs.length / 5);
-                //Save just the number before the point
+                //Save just the number before the point 
                 section = parseInt(section.toString().split(".")[0]);
             }
             if ((section * 5 + 5) < this.songs.length) {
@@ -413,27 +398,17 @@
             let songsToShow;
 
             if (this.songs.length >= section * 5 + 5){
-            	//console.log("Case (songs.length >= section * 5 + 5)");
             	songsToShow = this.songs.slice(section * 5, section * 5 + 5); // [)
             }   
                
             else{
-            	//console.log("Case !(songs.length >= section * 5 + 5)");
-            	//console.log("Section is " + section);
-            	//console.log("Songs length is " + songs.length);
-            	//console.log(songs.slice(section * 5, songs.length));
             	songsToShow = this.songs.slice(section * 5, this.songs.length); // [)
             }
-                
-                
-            console.log("SongsToShow has " + songsToShow.length + " elements");
 
             //Create the main row of the external table
-
             row = document.createElement("tr");
 
             songsToShow.forEach( function (songToShow){
-            	console.log("Creating a cell of the song table");
                 internalTableCell = document.createElement("td");
                 internalTable = document.createElement("table");
 
@@ -456,7 +431,6 @@
                 image = document.createElement("img");
                 imageCell.appendChild(image);
 
-				//alert(songToShow.base64String);
                 image.src = songToShow.base64String;
                 
                 anchor = document.createElement("a");
@@ -484,7 +458,7 @@
                 document.querySelector(selector) :
                 this.listBodyContainer.querySelectorAll("a")[0];
 
-            console.log("AutoClick select song with id: " + anchorToClick.getAttribute("songId"));
+            //console.log("AutoClick select song with id: " + anchorToClick.getAttribute("songId"));
 
             if(anchorToClick){
                 anchorToClick.dispatchEvent(e);
@@ -531,7 +505,6 @@
                                 let songs = JSON.parse(request.responseText);
 
                                 if(songs.length == 0){
-                                	console.log("Hiding the fieldSet for insert a song in the playList");
                                 	self.listFieldset.style.display = "none";
                                    	document.getElementById("addSongMessage").textContent = "All songs already in this playList";
                                     return;
@@ -605,6 +578,7 @@
             makeCall("GET" , "GetSongDetails?songId=" + this.songId + "&playlistId=" + this.playlistId , null ,
                 function(request) {
                     if(request.readyState == XMLHttpRequest.DONE){
+	
                     	pageOrchestrator.resetErrors();
                     	
                         switch(request.status){
@@ -635,16 +609,6 @@
 
             row = document.createElement("tr");
 
-            //TODO do it as follow -> but it's not good for the audio control tag
-            /*
-            let row , cell;
-            songDetails.forEach(function(item){
-                cell = document.createElement("td");
-                cell.appendChild(document.createTextNode(item));
-                row.appendChild(cell);
-            });
-             */
-
             titleCell = document.createElement("td");
             titleCell.appendChild(document.createTextNode(songDetails.songTitle));
             row.appendChild(titleCell);
@@ -666,7 +630,6 @@
             row.appendChild(genreCell);
 
             playCell = document.createElement("audio");
-            //playCell.setAttribute("type" , "audio/mpeg");
             playCell.type = "audio/mpeg";
             playCell.controls = "controls"
             playCell.src = songDetails.base64String;
@@ -702,14 +665,8 @@
             
             //Empty the table
             this.listBodyContainer.innerHTML = "";
-
-			console.log("The number of songs in playListToOrder is " + playListSongsToOrder.songs.length);
-
-            //playListSongsToOrder.songs.forEach( function(song) {
             
             for(let i = 0 ; i < playListSongsToOrder.songs.length ; i++){
-            
-            	console.log("Entered in the for: iteration number " + i);
             
             	let song = playListSongsToOrder.songs[i];
 
@@ -723,13 +680,10 @@
                 row.appendChild(dataCell);
                 
                 self.listBodyContainer.appendChild(row);
-                
-                console.log("Appended element with id " + song.id + " and title " + song.title);
-
             }
-            console.log("After the for");
+
             this.divContainer.style.display = "";
-            //call the other file
+
             //Add listeners to the new row
             handleSorting.addEventListeners();
         }
@@ -739,11 +693,10 @@
      * It's the main controller of the application
      */
     function PageOrchestrator() {
-        //Maybe i'll use just 1 error, not 1 for each component
-        let playlistTableError = document.getElementById("playlistTableError");
-        let songInPlaylistError = document.getElementById("songTableError");
 
         this.start = function() {
+			playListSongsToOrder = new PlayListSongsToOrder();
+			
             //Set the personal message and show it. Question: why I don't have to save the container in the object as for the userName?
             personalMessage = new PersonalMessage(sessionStorage.getItem("userName") , document.getElementById("userName"));
             personalMessage.show();
@@ -801,12 +754,10 @@
         }
 
         this.refresh = function(playlistId) {
-            //Reset the errors
-            console.log("pageOrchestrator.refresh() called");
-            
+            //Reset the errors            
 			this.resetErrors();
 			
-			//Show a playList
+			//Show a playList sending as parameter the autoclick function
             playlistList.show( function() {
                 playlistList.autoClick(playlistId);
             });
@@ -846,7 +797,6 @@
         }
         
         this.resetErrors = function() {
-        	console.log("ResetErrors called!");
         	document.getElementById("playlistTableError").textContent = "";
         	document.getElementById("createPlaylistError").textContent = "";
         	document.getElementById("songError").textContent = "";

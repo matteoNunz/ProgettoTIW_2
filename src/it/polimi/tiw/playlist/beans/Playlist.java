@@ -17,7 +17,7 @@ public class Playlist {
 	
 	/**
 	 * 
-	 * @return the id of the playlist
+	 * @return the id of the playList
 	 */
 	public int getId() {
 		return id;
@@ -25,7 +25,7 @@ public class Playlist {
 	
 	/**
 	 * 
-	 * @return the creation date of the Playlist
+	 * @return the creation date of the PlayList
 	 */
 	public Date getCreationDate() {
 		return creationDate;

@@ -31,7 +31,6 @@ public class AddSong extends HttpServlet{
 		try {
 			connection = ConnectionHandler.getConnection(getServletContext());
 		} catch (UnavailableException e) {
-			//TODO send an error
 			e.printStackTrace();
 		}
 	}

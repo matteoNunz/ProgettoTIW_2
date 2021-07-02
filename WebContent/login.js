@@ -1,25 +1,20 @@
 /**
  * Login
  */
-
-/**
- * Function to avoid the global scope
- */
 (function() {
-	console.log("In the global function of login.js");
     document.getElementById("loginButton").addEventListener('click' , (e) => {
 
         console.log("Login event!");
         //Take the closest form
         let form = e.target.closest("form");
 
-        //Check if the form is valid -> every field is been fulled
+        //Check if the form is valid -> every field is been filled
         if(form.checkValidity()){
 
             //Make the call to the server
-            makeCall("POST" , 'CheckLogin' , e.target.closest("form") ,
+            makeCall("POST" , 'CheckLogin' , form ,
                 function (x) {
-                    console.log("CallBack function called");
+
                     if(x.readyState == XMLHttpRequest.DONE){
                         let message = x.responseText;
                         switch(x.status){

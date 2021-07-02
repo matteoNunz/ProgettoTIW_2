@@ -1,7 +1,6 @@
 /**
  * Handle the sorting of a playList
  */
-
 {
     var handleSorting = new HandleSorting();
 
@@ -22,17 +21,17 @@
 
                 elements[i].addEventListener("dragstart" , dragStart); //save dragged element reference
                 elements[i].addEventListener("dragover" , dragOver);   //change color of reference element to red
-                elements[i].addEventListener("dragleave" , dragLeave); // change color of reference element to black
+                elements[i].addEventListener("dragleave" , dragLeave); //change color of reference element to black
                 elements[i].addEventListener("drop" , drop);           //change position of dragged element using the referenced element
             }
         }
 
         /**
          * Function that makes all the rows of the table not selectd
-         * @param rows
+         * @param rows is an array containing the row of the table
          */
         function unselectRows(rows) {
-            for(let i = 0 ; i < rows.length; i++){
+            for(let i = 0 ; i < rows.length ; i++){
                 rows[i].className = "notSelected";
             }
         }
@@ -44,8 +43,6 @@
         function dragStart(event) {
             //Save the element
             startElement = event.target.closest("tr");
-            console.log("Start element selected and it is " + startElement);
-            console.log("The start song id is: " + startElement.getAttribute("songId"));
         }
 
         /**
@@ -54,14 +51,13 @@
          */
         function dragOver(event) {
             //Need to use prevent default, otherwise the drop event is not called
+			// -> Default action: reset the current drag operation to "none"
             event.preventDefault();
 
             //Need to select the row that triggered this event to marked as "selected" so it's clear for the user
             let dest = event.target.closest("tr");
 
-            //TODO change color with CSS
-
-            // Mark  the current element as "selected"
+            //Mark  the current element as "selected"
             dest.className = "selected";
         }
 
@@ -73,7 +69,7 @@
             //Need to select the row that triggered this event to marked it as "notSelected" so it's clear for the user
             let dest = event.target.closest("tr");
 
-            //Mark the current element as "notSelected", then with CSS we will put it in black
+            //Mark the current element as "notSelected"
             dest.className = "notSelected";
         }
 
@@ -90,9 +86,6 @@
             let table = dest.closest('table');
             let rows = Array.from(table.querySelectorAll('tbody > tr'));
             let indexDest = rows.indexOf(dest);
-            
-            console.log("StartElement is: " + startElement);
-            console.log("The start song id is: " + startElement.getAttribute("songId"));
 
             //Move the dragged element to the new position
             if (rows.indexOf(startElement) < indexDest)
@@ -102,7 +95,7 @@
                 //If we're moving up, then we insert the element before our reference (indexDest)
                 startElement.parentElement.insertBefore(startElement, rows[indexDest]);
 
-            //Mark all rows in "not selected" class to reset previous dragOver
+            //Mark all rows with "not selected" class to reset previous dragOver
             unselectRows(rows);
         }
     }

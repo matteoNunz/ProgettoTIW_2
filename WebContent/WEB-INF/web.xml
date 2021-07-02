@@ -45,7 +45,6 @@
 	<url-pattern>/GetSongsNotInPlaylist</url-pattern>
 	<url-pattern>/GetSongDetails</url-pattern>  
     <url-pattern>/Logout</url-pattern>  
-    <!-- url-pattern>/HomePage.html</url-pattern> -->
  </filter-mapping> 
 
   <!--Welcome files-->

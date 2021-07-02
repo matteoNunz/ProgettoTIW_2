@@ -66,12 +66,7 @@ public class CreateSong extends HttpServlet{
 		Part songFile = request.getPart("songFile");
 		
 		int publicationYear = 0;
-		
-		System.out.println("Creating a new song");
-		System.out.println("Genre is: " + genre);
-		System.out.println("Publication year is: " + date);
-		
-		
+				
 		HttpSession s = request.getSession();
 		User user = (User) s.getAttribute("user");
 
@@ -173,7 +168,7 @@ public class CreateSong extends HttpServlet{
 		if(tempFile.exists())
 			error += "Image name already exists;";*/
 		
-		//In case od future error the software will be delete the new song only if it is completely new
+		//In case of future error the software will be delete the new song only if it is completely new
 		File tempFile = new File(outputPathImg);
 		if(tempFile.exists())
 			isReplaced = true;
@@ -181,7 +176,6 @@ public class CreateSong extends HttpServlet{
 		tempFile = new File(outputPathSong);
 		if(tempFile.exists())
 			error += "Song name already exists; ";
-		System.out.println("Error is: " + error);
 		
 		//If an error occurred, redirect with errorMsg1 to the template engine  
 		if(!error.equals("")) {

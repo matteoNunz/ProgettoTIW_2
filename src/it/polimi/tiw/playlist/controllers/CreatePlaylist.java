@@ -72,7 +72,6 @@ public class CreatePlaylist extends HttpServlet{
 			else {
 				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);//Code 400	
 				response.getWriter().println("PlayList name already used");
-				System.out.println("Playlist name already used");
 			}
 		}catch(SQLException e) {
 			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);//Code 500

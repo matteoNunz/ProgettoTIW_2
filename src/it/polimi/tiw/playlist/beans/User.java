@@ -17,7 +17,6 @@ public class User {
 	}
 	
 	/**
-	 * 
 	 * @return the userName 
 	 */
 	public String getUserName() {
@@ -25,7 +24,6 @@ public class User {
 	}
 	
 	/**
-	 * 
 	 * @return the password of the user
 	 */
 	public String getPassword() {
@@ -33,7 +31,6 @@ public class User {
 	}
 	
 	/**
-	 * 
 	 * @return the user's id
 	 */
 	public int getId() {

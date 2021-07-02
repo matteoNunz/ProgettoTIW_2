@@ -12,7 +12,6 @@ public class SongDetails{
 
 	
 	/**
-	 * 
 	 * @return the id of the song
 	 */
 	public int getId() {
@@ -20,7 +19,6 @@ public class SongDetails{
 	}
 	
 	/**
-	 * 
 	 * @return the song title
 	 */
 	public String getSongTitle() {
@@ -28,7 +26,6 @@ public class SongDetails{
 	}
 	
 	/**
-	 * 
 	 * @return the title of the album that contains the song
 	 */
 	public String getAlbumTitle() {
@@ -36,7 +33,6 @@ public class SongDetails{
 	}
 	
 	/**
-	 * 
 	 * @return the singer of the song
 	 */
 	public String getSinger() {
@@ -44,7 +40,6 @@ public class SongDetails{
 	}
 	
 	/**
-	 * 
 	 * @return the kind of song
 	 */
 	public String getKindOf() {
@@ -52,15 +47,13 @@ public class SongDetails{
 	}
 	
 	/**
-	 * 
 	 * @return the name of the music file
 	 */
 	public String getSongFile() {
 		return songFile;
 	}
 	
-	/**
-	 * 
+	/** 
 	 * @return the name of the image file
 	 */
 	public String getImgFile() {
@@ -68,7 +61,6 @@ public class SongDetails{
 	}
 	
 	/**
-	 * 
 	 * @return the publication year of the album that contains the song
 	 */
 	public int getPublicationYear() {

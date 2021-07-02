@@ -1,10 +1,6 @@
 /**
  * Create a new playList
  */
-
-/**
- * Function to avoid the global scope
- */
 (function() {
     document.getElementById("createPlaylistButton").addEventListener("click" , (e) => {
 
@@ -32,14 +28,13 @@
             //Make the call to the server
             makeCall("POST" , "CreatePlaylist" , form ,
                 function (x) {
-                    console.log("CallBack function called");
 
                     if(x.readyState == XMLHttpRequest.DONE){
                     pageOrchestrator.resetErrors();
                     
                         switch (x.status){
                             case 200:
-                                //Update the playList list -> maybe use directly the pageOrchestrator
+                                //Update the playList list
                                 playlistList.show();
                                 break;
 

@@ -83,7 +83,6 @@ public class Registration extends HttpServlet{
 			result = userDao.addUser(userName, password);
 			
 			if(result == true) {
-				//Send 200
 				response.setStatus(HttpServletResponse.SC_OK);//Code 200
 			}
 			else {

@@ -44,8 +44,6 @@ public class CheckLogin extends HttpServlet{
 		String userName = StringEscapeUtils.escapeJava(request.getParameter("user"));
 		String password = StringEscapeUtils.escapeJava(request.getParameter("password"));
 		
-		System.out.println("User: " + userName + ", password: " + password);
-		
 		//check if the parameters are not empty or null -> if not, send the error and set the status of the response
 		if(userName == null || password == null || userName.isEmpty() || password.isEmpty()) {
 			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);//Code 400

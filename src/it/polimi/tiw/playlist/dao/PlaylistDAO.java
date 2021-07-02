@@ -348,7 +348,6 @@ public class PlaylistDAO {
 		
 		ArrayList<Integer> sortedArray = new ArrayList<Integer>();
 		
-		
 		try {
 			pStatement = connection.prepareStatement(query);
 			pStatement.setInt(1, pId);

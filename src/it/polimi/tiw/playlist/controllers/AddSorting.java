@@ -54,7 +54,6 @@ public class AddSorting extends HttpServlet {
 		if(playlistId == null || playlistId.isEmpty()) {
 			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);//Code 400	
 			response.getWriter().println("PlayList not specified");
-			System.out.println("PlayList not specified");
 		}
 		
 		try {
@@ -62,14 +61,14 @@ public class AddSorting extends HttpServlet {
 		}catch(NumberFormatException e) {
 			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);//Code 400	
 			response.getWriter().println("PlayList not specified");
-			System.out.println("PlayList not specified");
 		}
 		
-		System.out.println("In Add Sorting");
-		System.out.println("PlayList id received is: " + playlistId);
+		//System.out.println("In Add Sorting");
+		//System.out.println("PlayList id received is: " + playlistId);
 		
 	    StringBuffer jb = new StringBuffer();
 	    String line = null;
+	    //Read the body of the request
 	    try {
 	        BufferedReader reader = request.getReader();
 	        while ((line = reader.readLine()) != null) {
@@ -81,19 +80,16 @@ public class AddSorting extends HttpServlet {
 			System.out.println("Error reading the request body, retry later");
 	    }
 	    
-	    System.out.println("The string buffer is: " + jb.toString());
 		//Create the jSon with the sorting
 		Gson gSon = new GsonBuilder().create();
-		//newSorting is the string to upload in the DB
 		String newSorting = gSon.toJson(jb);
-		System.out.println("The json is: " + newSorting.toString());
 		
 		if(newSorting == null || newSorting.length() <= 1) {
 			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);//Code 400	
 			response.getWriter().println("Add more songs to order you playlist!");
-			System.out.println("Add more songs to order you playlist!");
 		}
 		
+		//Convert the String array in an arrayList of integer in order to make some checks
 		ArrayList<Integer> sortedArray = FromJsonToArray.fromJsonToArrayList(newSorting);
 		SongDAO sDao = new SongDAO(connection);
 		
@@ -104,15 +100,12 @@ public class AddSorting extends HttpServlet {
 			currentNumber = sortedArray.get(i);
 			for(int j = i + 1 ; j < sortedArray.size() ; j++) {
 				if(sortedArray.get(j) == currentNumber) {
-					//System.out.println("Removing element: " + sortedArray.get(j) + " in position " + j);
 					sortedArray.remove(j);
 				}
 			}
 		}
 		
-		//System.out.println("SortedArray after duplicate check is: " + sortedArray.toString());
-		
-		//verify if each song id belongs to the user
+		//Verify if each song id belongs to the user
 		for(Integer id : sortedArray) {
 			try {
 				if(!sDao.findSongByUser(((int) id) , ((User) request.getSession().getAttribute("user")).getId()) ){
@@ -124,6 +117,7 @@ public class AddSorting extends HttpServlet {
 			}
 		}
 		
+		//Re-convert the arrayList of integer in the String to upload
 		String updatedSorting = gSon.toJson(sortedArray);
 		
 		PlaylistDAO pDao = new PlaylistDAO(connection);

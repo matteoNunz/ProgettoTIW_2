@@ -46,12 +46,10 @@ public class GetSongsInPLaylist extends HttpServlet{
 	public void doGet(HttpServletRequest request , HttpServletResponse response)throws ServletException,IOException{
 		//Take the playList id
 		String playlistId = request.getParameter("playlistId");
-		String section = request.getParameter("section");//Which songs need to be shown
+		String section = request.getParameter("section");
 		String error = "";
 		int id = -1;
 		int block = 0;
-		
-		System.out.println("Getting the song in playlist " + playlistId);
 		
 		HttpSession s = request.getSession();
 		
@@ -104,19 +102,11 @@ public class GetSongsInPLaylist extends HttpServlet{
 		//To take a specific ordering for songs (if present)
 		PlaylistDAO pDao = new PlaylistDAO(connection);
 		
-		//To take the title of the playList
-		//PlaylistDAO pDao = new PlaylistDAO(connection);
-		
 		//Take the titles and the image paths
 		try {
 			
 			ArrayList<SongDetails> songsInPlaylist = sDao.getSongTitleAndImg(id);
 			ArrayList<Integer> sorting = pDao.getSorting(id);
-			
-			int numberOfSongs = songsInPlaylist.size();
-			
-			System.out.println("Number of songs is " +  numberOfSongs);
-
 			
 			//Send all the song of the playList
 			JSONArray jArray = new JSONArray();
@@ -191,10 +181,6 @@ public class GetSongsInPLaylist extends HttpServlet{
 					jArray.put(jSonObject);
 				}
 			}
-			
-			
-			System.out.println("Prining jArray: ");
-			System.out.println(jArray.toString());
 			
 			response.setStatus(HttpServletResponse.SC_OK);//Code 200
 			response.setContentType("application/json");

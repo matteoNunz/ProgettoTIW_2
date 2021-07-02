@@ -1,15 +1,8 @@
 /**
  * Add a song in a playList
  */
-
-/**
- * Function to avoid the global scope
- */
-
 (function(){
     document.getElementById("addSongButton").addEventListener("click" , (e) => {
-
-        console.log("Adding a song to the playlist");
 
         //Take the closest form
         let form = e.target.closest("form");
@@ -20,7 +13,6 @@
         if(form.checkValidity()){
             makeCall("POST" , "AddSong?playlistId=" + songsNotInPlayList.playlistId , form ,
                 function(request) {
-                    console.log("CallBack function called");
 
                     if(request.readyState == XMLHttpRequest.DONE){
                     	pageOrchestrator.resetErrors();
@@ -44,8 +36,6 @@
                     }
                 }
             );
-            //I'm not sure it's necessary with a select form
-            //form.reset();
         }else{
             form.reportValidity();
         }
